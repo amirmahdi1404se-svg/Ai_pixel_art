@@ -23,9 +23,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Install Capacitor & Generate Android Project
         run: |
           npm install
@@ -34,6 +31,7 @@ jobs:
 
       - name: Build Debug APK
         run: |
+          echo "sdk.dir=$ANDROID_HOME" > android/local.properties
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
