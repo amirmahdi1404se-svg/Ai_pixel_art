@@ -1,0 +1,3743 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AI Pixel Forge Pro | کارگاه اسپرایت پیکسلی پرو</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Vazirmatn (Persian), Inter (English), JetBrains Mono (Code & Coordinates) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Vazirmatn', 'Inter', 'system-ui', 'sans-serif'],
+            en: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --midnight-bg: #04070f;
+      --glass-border: rgba(255, 255, 255, 0.14);
+      --glass-highlight: rgba(255, 255, 255, 0.24);
+      --cyan-glow: rgba(56, 189, 248, 0.35);
+    }
+
+    html[dir="rtl"] body {
+      font-family: 'Vazirmatn', 'Inter', system-ui, sans-serif;
+    }
+
+    html[dir="ltr"] body {
+      font-family: 'Inter', 'Vazirmatn', system-ui, sans-serif;
+    }
+
+    body {
+      background-color: var(--midnight-bg);
+      color: #f1f5f9;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ==================== AMBIENT DRIFTING LIGHT ORBS ==================== */
+    .ambient-stage {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(15, 23, 42, 0.6), #04070f 75%);
+    }
+
+    .ambient-orb {
+      position: absolute;
+      border-radius: 9999px;
+      filter: blur(95px);
+      opacity: 0.42;
+      will-change: transform;
+    }
+
+    .orb-cyan {
+      width: 440px;
+      height: 440px;
+      top: -8%;
+      left: 8%;
+      background: radial-gradient(circle, #06b6d4 0%, rgba(6, 182, 212, 0) 72%);
+      animation: driftOrb1 22s ease-in-out infinite alternate;
+    }
+
+    .orb-indigo {
+      width: 520px;
+      height: 520px;
+      top: 18%;
+      right: 4%;
+      background: radial-gradient(circle, #4f46e5 0%, rgba(79, 70, 229, 0) 72%);
+      animation: driftOrb2 26s ease-in-out infinite alternate;
+    }
+
+    .orb-violet {
+      width: 460px;
+      height: 460px;
+      bottom: -10%;
+      left: 34%;
+      background: radial-gradient(circle, #8b5cf6 0%, rgba(139, 92, 246, 0) 72%);
+      animation: driftOrb3 24s ease-in-out infinite alternate;
+    }
+
+    .orb-emerald {
+      width: 380px;
+      height: 380px;
+      bottom: 8%;
+      right: 26%;
+      background: radial-gradient(circle, #10b981 0%, rgba(16, 185, 129, 0) 72%);
+      animation: driftOrb4 20s ease-in-out infinite alternate;
+    }
+
+    .ambient-grid-mesh {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(56, 189, 248, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56, 189, 248, 0.035) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: radial-gradient(ellipse at center, black 35%, transparent 85%);
+    }
+
+    @keyframes driftOrb1 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(75px, 55px) scale(1.14); }
+    }
+    @keyframes driftOrb2 {
+      0% { transform: translate(0, 0) scale(1.05); }
+      100% { transform: translate(-80px, 65px) scale(0.94); }
+    }
+    @keyframes driftOrb3 {
+      0% { transform: translate(0, 0) scale(0.96); }
+      100% { transform: translate(60px, -70px) scale(1.12); }
+    }
+    @keyframes driftOrb4 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-55px, -45px) scale(1.08); }
+    }
+
+    /* ==================== THICK MULTI-LAYERED LIQUID GLASS ==================== */
+    .liquid-glass {
+      background: linear-gradient(
+        145deg,
+        rgba(22, 33, 58, 0.64) 0%,
+        rgba(10, 16, 30, 0.78) 55%,
+        rgba(7, 11, 22, 0.85) 100%
+      );
+      backdrop-filter: blur(32px) saturate(195%) contrast(108%);
+      -webkit-backdrop-filter: blur(32px) saturate(195%) contrast(108%);
+      border: 1px solid var(--glass-border);
+      box-shadow:
+        0 24px 60px -12px rgba(0, 0, 0, 0.82),
+        inset 0 1.5px 1px var(--glass-highlight),
+        inset 0 -1px 1px rgba(56, 189, 248, 0.12);
+    }
+
+    .liquid-glass-sub {
+      background: linear-gradient(
+        160deg,
+        rgba(15, 23, 42, 0.68) 0%,
+        rgba(6, 10, 20, 0.82) 100%
+      );
+      backdrop-filter: blur(22px) saturate(175%);
+      -webkit-backdrop-filter: blur(22px) saturate(175%);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow:
+        0 10px 28px -8px rgba(0, 0, 0, 0.65),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    }
+
+    .liquid-glass-hud {
+      background: linear-gradient(
+        145deg,
+        rgba(18, 28, 52, 0.72) 0%,
+        rgba(8, 13, 25, 0.86) 100%
+      );
+      backdrop-filter: blur(34px) saturate(205%);
+      -webkit-backdrop-filter: blur(34px) saturate(205%);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow:
+        0 20px 45px -10px rgba(0, 0, 0, 0.85),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.24);
+    }
+
+    .glass-sheen {
+      position: relative;
+      overflow: hidden;
+    }
+    .glass-sheen::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        115deg,
+        rgba(255, 255, 255, 0.24) 0%,
+        rgba(255, 255, 255, 0.05) 38%,
+        transparent 62%
+      );
+      pointer-events: none;
+    }
+
+    /* ==================== 100% CUSTOM LIQUID GLASS DROPDOWNS (.lg-select) ==================== */
+    .lg-select-trigger {
+      background: linear-gradient(155deg, rgba(20, 31, 56, 0.72), rgba(8, 13, 25, 0.86));
+      backdrop-filter: blur(24px) saturate(185%);
+      -webkit-backdrop-filter: blur(24px) saturate(185%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow:
+        0 6px 18px -4px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .lg-select-trigger:hover,
+    .lg-select-trigger[aria-expanded="true"] {
+      border-color: rgba(56, 189, 248, 0.55);
+      box-shadow:
+        0 0 22px rgba(6, 182, 212, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.28);
+    }
+
+    .lg-select-menu {
+      position: fixed;
+      z-index: 9999;
+      background: linear-gradient(
+        155deg,
+        rgba(19, 30, 54, 0.86) 0%,
+        rgba(8, 13, 26, 0.94) 100%
+      );
+      backdrop-filter: blur(36px) saturate(210%) contrast(110%);
+      -webkit-backdrop-filter: blur(36px) saturate(210%) contrast(110%);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow:
+        0 26px 65px -10px rgba(0, 0, 0, 0.92),
+        0 0 32px rgba(6, 182, 212, 0.18),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.24);
+      transform-origin: top center;
+      transition: opacity 0.18s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .lg-select-menu.dd-up {
+      transform-origin: bottom center;
+    }
+
+    .lg-select-menu.dd-closed {
+      opacity: 0;
+      transform: scale(0.95) translateY(-6px);
+      pointer-events: none;
+    }
+
+    .lg-select-menu.dd-up.dd-closed {
+      transform: scale(0.95) translateY(6px);
+    }
+
+    .lg-select-menu.dd-open {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    .lg-select-option {
+      transition: all 0.15s ease;
+    }
+
+    .lg-select-option:hover {
+      background: rgba(56, 189, 248, 0.16);
+      color: #ffffff;
+    }
+
+    .lg-select-option.is-selected {
+      background: linear-gradient(90deg, rgba(6, 182, 212, 0.26), rgba(99, 102, 241, 0.20));
+      color: #67e8f9;
+      box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.38);
+    }
+
+    /* ==================== PIXEL ART & HEXAGON HONEYCOMB ==================== */
+    .pixelated {
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-crisp-edges;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    .checkerboard {
+      background-color: #09101d;
+      background-image:
+        linear-gradient(45deg, #131e33 25%, transparent 25%),
+        linear-gradient(-45deg, #131e33 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #131e33 75%),
+        linear-gradient(-45deg, transparent 75%, #131e33 75%);
+      background-size: 14px 14px;
+      background-position: 0 0, 0 7px, 7px -7px, -7px 0;
+    }
+
+    #viewportCanvas {
+      touch-action: none;
+      cursor: crosshair;
+    }
+    #viewportCanvas.pan-cursor {
+      cursor: grab;
+    }
+    #viewportCanvas.panning-cursor {
+      cursor: grabbing;
+    }
+
+    /* Hexagonal Honeycomb Interactive Cells */
+    .hex-cell {
+      cursor: pointer;
+      transform-box: fill-box;
+      transform-origin: center;
+      transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), filter 0.12s ease;
+    }
+    .hex-cell:hover {
+      transform: scale(1.16);
+      filter: brightness(1.12) drop-shadow(0 0 4px rgba(255, 255, 255, 0.45));
+    }
+
+    /* Custom Range Sliders */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: rgba(8, 13, 25, 0.9);
+      height: 6px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #38bdf8, #34d399);
+      cursor: pointer;
+      border: 2px solid #04070f;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.75);
+    }
+
+    /* Custom Thin Glass Scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(4, 7, 15, 0.4);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.28);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(56, 189, 248, 0.55);
+    }
+  </style>
+</head>
+<body class="relative flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
+
+  <!-- ==================== AMBIENT LIGHT ORBS LAYER ==================== -->
+  <div class="ambient-stage" aria-hidden="true">
+    <div class="ambient-orb orb-cyan"></div>
+    <div class="ambient-orb orb-indigo"></div>
+    <div class="ambient-orb orb-violet"></div>
+    <div class="ambient-orb orb-emerald"></div>
+    <div class="ambient-grid-mesh"></div>
+  </div>
+
+  <!-- ==================== FLOATING TOP LIQUID GLASS HEADER ==================== -->
+  <header class="sticky top-0 z-40 px-2.5 sm:px-4 pt-2.5">
+    <div class="max-w-[1720px] mx-auto liquid-glass rounded-2xl px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2">
+
+      <!-- Brand Logo & Bilingual Title -->
+      <div class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 via-indigo-400 to-emerald-400 p-[1.5px] shadow-lg shadow-cyan-500/25 flex-shrink-0">
+          <div class="w-full h-full bg-[#050914]/90 rounded-[10.5px] flex items-center justify-center">
+            <svg class="w-5 h-5 text-cyan-300" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M11 1h4v4h-1v1h-1v1h-1v1h-1v1h-1v1H9v1h1v1H9v1H8v-1H7v1H6v1H5v1H3v-2h1v-1h1v-1h1v-1H5V9h1V8h1v1h1V8h1V7h1V6h1V5h1V4h1V1z"/>
+            </svg>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 data-i18n="appTitle" class="text-sm sm:text-base font-extrabold tracking-tight bg-gradient-to-r from-cyan-200 via-white to-emerald-200 bg-clip-text text-transparent">
+              کارگاه اسپرایت پیکسلی
+            </h1>
+            <span dir="ltr" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-cyan-400/15 text-cyan-200 border border-cyan-300/35 shadow-sm">
+              PRO
+            </span>
+          </div>
+          <p data-i18n="appSubtitle" class="hidden xl:block text-[11px] text-slate-300/80">
+            استودیو طراحی پیکسلی و تولید هوشمند اسپرایت
+          </p>
+        </div>
+      </div>
+
+      <!-- Multi-Resolution Selector Pill Strip (16x to 256x) -->
+      <div dir="ltr" class="flex items-center gap-1 liquid-glass-sub p-1 rounded-xl">
+        <button id="resBtn_16" onclick="changeGridResolution(16)" class="res-pill px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold transition bg-gradient-to-r from-cyan-400 to-emerald-400 text-slate-950 shadow">16×</button>
+        <button id="resBtn_32" onclick="changeGridResolution(32)" class="res-pill px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold transition text-slate-300 hover:text-white">32×</button>
+        <button id="resBtn_64" onclick="changeGridResolution(64)" class="res-pill px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold transition text-slate-300 hover:text-white">64×</button>
+        <button id="resBtn_128" onclick="changeGridResolution(128)" class="res-pill px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold transition text-slate-300 hover:text-white">128×</button>
+        <button id="resBtn_256" onclick="changeGridResolution(256)" class="res-pill px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold transition text-slate-300 hover:text-white">256×</button>
+      </div>
+
+      <!-- Center Viewport & History Controls -->
+      <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+
+        <!-- Undo / Redo -->
+        <div class="flex items-center liquid-glass-sub p-1 rounded-xl">
+          <button id="btnUndo" onclick="undo()" data-i18n-title="undoTip" title="بازگردانی (Ctrl+Z)" class="p-1.5 rounded-lg text-slate-200 hover:text-cyan-300 hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 14L4 9m0 0l5-5M4 9h10.5a5.5 5.5 0 015.5 5.5v0a5.5 5.5 0 01-5.5 5.5H11" />
+            </svg>
+          </button>
+          <button id="btnRedo" onclick="redo()" data-i18n-title="redoTip" title="تکرار مجدد (Ctrl+Y)" class="p-1.5 rounded-lg text-slate-200 hover:text-cyan-300 hover:bg-white/10 disabled:opacity-30 disabled:pointer-events-none transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 14l5-5m0 0l-5-5m5 5H9.5A5.5 5.5 0 004 14.5v0A5.5 5.5 0 009.5 20H13" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Zoom Controls -->
+        <div dir="ltr" class="hidden sm:flex items-center liquid-glass-sub p-1 rounded-xl text-[11px] font-mono">
+          <button onclick="zoomByFactor(0.82)" title="Zoom Out (-)" class="px-2 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition">-</button>
+          <button id="btnZoomPct" onclick="fitCanvasToScreen()" title="Fit to Screen" class="px-2 py-1 rounded-lg text-cyan-300 font-bold hover:bg-white/10 transition">100%</button>
+          <button onclick="zoomByFactor(1.22)" title="Zoom In (+)" class="px-2 py-1 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition">+</button>
+        </div>
+
+        <!-- Grid Lines Toggle (#) -->
+        <button id="btnGridToggle" onclick="toggleGridLines()" data-i18n-title="gridTip" title="خطوط شبکه (#)" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-mono font-bold border transition bg-cyan-400/20 border-cyan-300/45 text-cyan-200 shadow-sm">
+          <span>#</span>
+        </button>
+
+        <!-- Symmetry Cycler (OFF -> X -> Y -> XY) -->
+        <button id="btnSymmetry" onclick="cycleSymmetryMode()" data-i18n-title="symmetryTip" title="حالت تقارن (OFF / X / Y / XY)" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-mono font-bold border transition liquid-glass-sub text-slate-200 hover:border-cyan-400/40">
+          <span id="symmetryLabel">OFF</span>
+          <svg class="w-3.5 h-3.5 text-cyan-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18M8 7l-4 5 4 5M16 7l4 5-4 5" />
+          </svg>
+        </button>
+
+        <!-- Bilingual Switcher (FA | EN) -->
+        <div dir="ltr" class="flex items-center liquid-glass-sub p-1 rounded-xl">
+          <button id="langBtn_fa" onclick="setLanguage('fa')" class="px-2 py-0.5 rounded-lg text-[11px] font-bold transition bg-gradient-to-r from-cyan-400 to-indigo-400 text-slate-950 shadow">FA</button>
+          <button id="langBtn_en" onclick="setLanguage('en')" class="px-2 py-0.5 rounded-lg text-[11px] font-bold transition text-slate-300 hover:text-white">EN</button>
+        </div>
+
+        <!-- AI Settings Modal Trigger -->
+        <button onclick="openApiModal()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold liquid-glass-sub hover:border-cyan-400/50 text-slate-100 transition">
+          <span id="apiStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]"></span>
+          <span data-i18n="aiSettingsBtn" class="hidden md:inline">تنظیمات AI</span>
+        </button>
+
+        <!-- Quick Transparent PNG Export CTA -->
+        <button onclick="exportTransparentPNG()" class="glass-sheen flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-400 to-teal-400 text-slate-950 hover:brightness-110 active:scale-[0.98] transition shadow-lg shadow-emerald-950/50 cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          <span data-i18n="headerExportBtn">خروجی PNG</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN 3-COLUMN LIQUID GLASS STUDIO ==================== -->
+  <main class="relative z-10 flex-1 max-w-[1720px] w-full mx-auto p-2.5 sm:p-4 grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
+
+    <!-- COLUMN 1 (Start/Right in RTL): 10-TOOL PALETTE + BRUSH SIZE + QUICK TRANSFORMS -->
+    <aside class="lg:col-span-3 xl:col-span-2 liquid-glass rounded-2xl p-3 flex flex-col gap-3 order-2 lg:order-1">
+      <div class="flex items-center justify-between border-b border-white/10 pb-2">
+        <span data-i18n="toolsHeader" class="text-xs font-bold text-slate-200">ابزارها</span>
+        <span id="activeToolBadge" class="text-[11px] font-bold text-cyan-300">قلم</span>
+      </div>
+
+      <!-- 10 Pixel Art Tools -->
+      <div class="grid grid-cols-5 lg:grid-cols-2 gap-1.5">
+        <!-- Pencil (P) -->
+        <button id="toolBtn_pencil" onclick="selectTool('pencil')" data-i18n-title="tipPencil" title="قلم (P)" class="tool-item flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-xl border text-[11px] font-semibold transition bg-cyan-400/20 border-cyan-300/60 text-cyan-200 shadow-inner">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+          <span data-i18n="toolPencil" class="truncate max-w-full">قلم</span>
+        </button>
+
+        <!-- Eraser (E) -->
+        <button id="toolBtn_eraser" onclick="selectTool('eraser')" data-i18n-title="tipEraser" title="پاک‌کن (E)" class="tool-item flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-xl border text-[11px] font-medium transition liquid-glass-sub text-slate-300 hover:border-cyan-400/40">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6" /></svg>
+          <span data-i18n="toolEraser" class="truncate max-w-full">پاک‌کن</span>
+        </button>
+
+        <!-- Flood Fill (G) -->
+        <button id="toolBtn_bucket" onclick="selectTool('bucket')" data-i18n-title="tipBucket" title="سطل رنگ (G)" class="tool-item flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-xl border text-[11px] font-medium transition liquid-glass-sub text-slate-300 hover:border-cyan-400/40">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11l-8-8-8.6 8.6a2 2 0 000 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11zm-14 2h12m3 4a2 2 0 11-4 0c0-1.5 2-3.5 2-3.5s2 2 2 3.5z" /></svg>
+          <span data-i18n="toolBucket" class="truncate max-w-full">سطل</span>
+        </button>
+
+        <!-- Eyedropper (I) -->
+        <button id="toolBtn_picker" onclick="selectTool('picker')" data-i18n-title="tipPicker" title="رنگ‌گیر (I)" class="tool-item flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-xl border text-[11px] font-medium transition liquid-glass-sub text-slate-300 hover:border-cyan-400/40">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
+          <span data-i18n="toolPicker" class="truncate max-w-full">رنگ‌گیر</span>
+        </button>
+
+        <!-- Line (L) -->
+        <button id="toolBtn_line" onclick="selectTool('line')" data-i18n-title="tipLine" title="خط صاف (L)" class="tool-item flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-xl border text-[11px] font-medium transition liquid-glass-sub text-slate-300 hover:border-cyan-400/40">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 20L20 4" /></svg>
+          <span data-i18n="toolLine" class="truncate max-w-full">خط</span>
+        </button>
+
+        <!-- Rectangle (R) -->
+        <button id="toolBtn_rect" onclick="selectTool('rect')" data-i18n-title="tipRect" title="مربع / مستطیل (R)" class="tool-item flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-xl border text-[11px] font-medium transition liquid-glass-sub text-slate-300 hover:border-cyan-400/40">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="1.5" /></svg>
+          <span data-i18n="toolRect" class="truncate max-w-full">مربع</span>
+        </button>
+
+        <!-- Circle (C) -->
+        <button id="toolBtn_circle" onclick="selectTool('circle')" data-i18n-title="tipCircle" title="دایره (C)" class="tool-item flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-xl border text-[11px] font-medium transition liquid-glass-sub text-slate-300 hover:border-cyan-400/40">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /></svg>
+          <span data-i18n="toolCircle" class="truncate max-w-full">دایره</span>
+        </button>
+
+        <!-- Shade Lighten/Darken (S) -->
+        <button id="toolBtn_shade" onclick="selectTool('shade')" data-i18n-title="tipShade" title="سایه روشن/تیره (S)" class="tool-item flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-xl border text-[11px] font-medium transition liquid-glass-sub text-slate-300 hover:border-cyan-400/40">
+          <svg class="w-4 h-4 text-amber-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+          <span data-i18n="toolShade" class="truncate max-w-full">سایه</span>
+        </button>
+
+        <!-- Checkerboard Dither (D) -->
+        <button id="toolBtn_dither" onclick="selectTool('dither')" data-i18n-title="tipDither" title="دیتر شطرنجی (D)" class="tool-item flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-xl border text-[11px] font-medium transition liquid-glass-sub text-slate-300 hover:border-cyan-400/40">
+          <svg class="w-4 h-4 text-emerald-300" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h3v3H2V2zm6 0h3v3H8V2zM5 5h3v3H5V5zm6 0h3v3h-3V5zM2 8h3v3H2V8zm6 0h3v3H8V8zm-3 3h3v3H5v-3zm6 0h3v3h-3v-3z"/></svg>
+          <span data-i18n="toolDither" class="truncate max-w-full">دیتر</span>
+        </button>
+
+        <!-- Pan Viewport (H) -->
+        <button id="toolBtn_pan" onclick="selectTool('pan')" data-i18n-title="tipPan" title="جابجایی بوم (H یا Space)" class="tool-item flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-xl border text-[11px] font-medium transition liquid-glass-sub text-slate-300 hover:border-cyan-400/40">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" /></svg>
+          <span data-i18n="toolPan" class="truncate max-w-full">جابجایی</span>
+        </button>
+      </div>
+
+      <!-- Brush Size Selector (1px to 4px) -->
+      <div class="pt-1 border-t border-white/10">
+        <span data-i18n="brushSizeLabel" class="block text-[11px] text-slate-300 mb-1.5">اندازه قلم:</span>
+        <div dir="ltr" class="grid grid-cols-4 gap-1 liquid-glass-sub p-1 rounded-xl">
+          <button id="brushBtn_1" onclick="setBrushSize(1)" class="py-1 rounded-lg text-[11px] font-mono font-bold bg-gradient-to-r from-cyan-400 to-teal-400 text-slate-950 shadow">1px</button>
+          <button id="brushBtn_2" onclick="setBrushSize(2)" class="py-1 rounded-lg text-[11px] font-mono font-bold text-slate-300 hover:text-white">2px</button>
+          <button id="brushBtn_3" onclick="setBrushSize(3)" class="py-1 rounded-lg text-[11px] font-mono font-bold text-slate-300 hover:text-white">3px</button>
+          <button id="brushBtn_4" onclick="setBrushSize(4)" class="py-1 rounded-lg text-[11px] font-mono font-bold text-slate-300 hover:text-white">4px</button>
+        </div>
+      </div>
+
+      <!-- Quick Transforms, Nudge & Auto-Outline -->
+      <div class="pt-1 border-t border-white/10 flex flex-col gap-1.5">
+        <span data-i18n="quickTransformsLabel" class="block text-[11px] text-slate-300">تغییرات سریع و افکت:</span>
+        <div class="grid grid-cols-2 gap-1.5">
+          <button onclick="flipCanvasHorizontal()" class="py-1.5 px-2 rounded-xl liquid-glass-sub hover:border-cyan-400/45 text-[11px] text-slate-200 transition flex items-center justify-center gap-1">
+            <span>⇄</span>
+            <span data-i18n="flipHBtn">قرینه افقی</span>
+          </button>
+          <button onclick="flipCanvasVertical()" class="py-1.5 px-2 rounded-xl liquid-glass-sub hover:border-cyan-400/45 text-[11px] text-slate-200 transition flex items-center justify-center gap-1">
+            <span>⇅</span>
+            <span data-i18n="flipVBtn">قرینه عمودی</span>
+          </button>
+          <button onclick="rotateCanvas90()" class="py-1.5 px-2 rounded-xl liquid-glass-sub hover:border-cyan-400/45 text-[11px] text-slate-200 transition flex items-center justify-center gap-1">
+            <span>↻</span>
+            <span data-i18n="rotate90Btn">چرخش ۹۰°</span>
+          </button>
+          <button onclick="applyAutoOutline()" class="py-1.5 px-2 rounded-xl bg-cyan-400/15 hover:bg-cyan-400/25 border border-cyan-300/35 text-[11px] text-cyan-200 font-semibold transition flex items-center justify-center gap-1">
+            <span>✦</span>
+            <span data-i18n="autoOutlineBtn">دورگیری</span>
+          </button>
+        </div>
+
+        <!-- Nudge Canvas D-Pad Strip -->
+        <div dir="ltr" class="grid grid-cols-4 gap-1 liquid-glass-sub p-1 rounded-xl">
+          <button onclick="nudgeCanvas(-1, 0)" title="Nudge Left" class="py-1 rounded-lg text-xs text-slate-300 hover:text-cyan-300 hover:bg-white/10 transition">←</button>
+          <button onclick="nudgeCanvas(0, -1)" title="Nudge Up" class="py-1 rounded-lg text-xs text-slate-300 hover:text-cyan-300 hover:bg-white/10 transition">↑</button>
+          <button onclick="nudgeCanvas(0, 1)" title="Nudge Down" class="py-1 rounded-lg text-xs text-slate-300 hover:text-cyan-300 hover:bg-white/10 transition">↓</button>
+          <button onclick="nudgeCanvas(1, 0)" title="Nudge Right" class="py-1 rounded-lg text-xs text-slate-300 hover:text-cyan-300 hover:bg-white/10 transition">→</button>
+        </div>
+
+        <!-- Clear Canvas -->
+        <button onclick="requestClearCanvas()" class="mt-0.5 py-1.5 px-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-400/35 text-[11px] text-rose-200 font-semibold transition flex items-center justify-center gap-1.5">
+          <span>✕</span>
+          <span data-i18n="clearCanvasBtn">پاک کردن بوم</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- COLUMN 2 (Center): INTERACTIVE PIXEL STAGE + FLOATING LIVE PREVIEW HUD + ANIMATION TIMELINE -->
+    <section class="lg:col-span-5 xl:col-span-6 liquid-glass rounded-2xl relative overflow-hidden flex flex-col min-h-[460px] sm:min-h-[580px] lg:min-h-[710px] order-1 lg:order-2">
+
+      <!-- Floating Live Preview & 3x3 Seamless Tile HUD -->
+      <div class="absolute top-3 start-3 z-20 liquid-glass-hud rounded-2xl p-2.5 flex flex-col gap-2 w-[158px]">
+        <div class="flex items-center justify-between gap-1">
+          <span data-i18n="livePreviewLabel" class="text-[11px] font-bold text-slate-100">پیش‌نمایش زنده</span>
+          <button id="btnTilePreviewToggle" onclick="toggleTilePreviewMode()" class="px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold border transition liquid-glass-sub text-slate-300 hover:border-cyan-400/50">
+            3×3
+          </button>
+        </div>
+
+        <div id="standardPreviewBox" class="grid grid-cols-2 gap-1.5 items-end">
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-16 h-16 checkerboard rounded-xl border border-white/15 flex items-center justify-center overflow-hidden">
+              <canvas id="preview2x" class="pixelated w-14 h-14"></canvas>
+            </div>
+            <span dir="ltr" class="text-[9px] font-mono text-slate-300">2×</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-12 h-12 checkerboard rounded-xl border border-white/15 flex items-center justify-center overflow-hidden">
+              <canvas id="preview1x" class="pixelated max-w-[36px] max-h-[36px]"></canvas>
+            </div>
+            <span dir="ltr" class="text-[9px] font-mono text-slate-300">1×</span>
+          </div>
+        </div>
+
+        <div id="tilePreviewBox" class="hidden flex-col items-center gap-1">
+          <div class="w-full h-24 checkerboard rounded-xl border border-emerald-400/40 flex items-center justify-center overflow-hidden">
+            <canvas id="previewTile3x3" class="pixelated w-20 h-20 rounded"></canvas>
+          </div>
+          <span data-i18n="seamlessTileTag" class="text-[9px] text-emerald-300">کاشی بی‌درز ۳×۳</span>
+        </div>
+      </div>
+
+      <!-- Floating Coordinates HUD -->
+      <div dir="ltr" class="absolute top-3 end-3 z-20 liquid-glass-hud px-3 py-1.5 rounded-xl text-[11px] font-mono text-cyan-200 flex items-center gap-2">
+        <span id="statusCoords">X: -, Y: -</span>
+        <span class="text-white/20">|</span>
+        <span id="statusGridDim" class="text-emerald-300 font-bold">16×16</span>
+      </div>
+
+      <!-- Main Interactive Pixel Stage -->
+      <div id="stageContainer" class="flex-1 w-full h-full relative">
+        <canvas id="viewportCanvas" class="w-full h-full block"></canvas>
+      </div>
+
+      <!-- Multi-Frame Animation & Onion Skin Strip -->
+      <div class="z-20 mx-3 mb-2.5 liquid-glass-hud rounded-2xl p-2 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-1.5">
+          <button id="btnPlayAnim" onclick="togglePlayAnimation()" data-i18n-title="playAnimTip" title="پخش/توقف انیمیشن" class="w-7 h-7 rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center shadow hover:brightness-110 transition">
+            ▶
+          </button>
+          <button onclick="cycleAnimFps()" dir="ltr" class="px-2 py-1 rounded-lg liquid-glass-sub text-[10px] font-mono font-bold text-cyan-300 hover:border-cyan-400/40 transition">
+            <span id="animFpsLabel">6 FPS</span>
+          </button>
+          <button id="btnOnionSkin" onclick="toggleOnionSkin()" data-i18n-title="onionSkinTip" title="نمایش شبح فریم قبلی (Onion Skin)" class="px-2 py-1 rounded-lg liquid-glass-sub text-[10px] font-semibold text-slate-300 hover:border-cyan-400/40 transition">
+            <span data-i18n="onionSkinBtn">پوست‌پیازی</span>
+          </button>
+        </div>
+
+        <!-- Frame Thumbnails List -->
+        <div id="framesStrip" class="flex items-center gap-1.5 overflow-x-auto max-w-[240px] sm:max-w-[330px] py-0.5 px-1">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Frame Actions (+ / Duplicate / Delete) -->
+        <div dir="ltr" class="flex items-center gap-1">
+          <button onclick="addNewFrame()" title="Add Blank Frame" class="px-2 py-1 rounded-lg liquid-glass-sub hover:border-emerald-400/50 text-xs font-bold text-emerald-300 transition">+</button>
+          <button onclick="duplicateCurrentFrame()" title="Duplicate Frame" class="px-2 py-1 rounded-lg liquid-glass-sub hover:border-cyan-400/50 text-xs font-bold text-cyan-300 transition">⧉</button>
+          <button onclick="deleteCurrentFrame()" title="Delete Frame" class="px-2 py-1 rounded-lg liquid-glass-sub hover:border-rose-400/50 text-xs font-bold text-rose-300 transition">✕</button>
+        </div>
+      </div>
+
+      <!-- Stage Hint Footer -->
+      <div class="px-3.5 py-1.5 border-t border-white/10 bg-[#04070f]/60 flex items-center justify-between text-[10px] text-slate-300/80">
+        <span data-i18n="stageHint">لمس یا کلیک برای طراحی • اسکرول برای زوم • Space+درگ برای جابجایی</span>
+        <span id="statusColorsCount" dir="ltr" class="font-mono text-cyan-300">0 colors</span>
+      </div>
+    </section>
+
+    <!-- COLUMN 3 (End/Left in RTL): TABBED STUDIO INSPECTOR (AI GENERATOR | COLOR & HEXAGON PALETTE | IMPORT/EXPORT) -->
+    <aside class="lg:col-span-4 xl:col-span-4 liquid-glass rounded-2xl p-3.5 flex flex-col gap-3 order-3">
+
+      <!-- Liquid Glass Segmented Tab Bar -->
+      <div class="grid grid-cols-3 gap-1.5 liquid-glass-sub p-1 rounded-2xl">
+        <button id="tabBtn_ai" onclick="switchInspectorTab('ai')" class="py-2 px-2 rounded-xl text-xs font-bold transition bg-gradient-to-r from-cyan-400/25 to-emerald-400/20 border border-cyan-300/40 text-cyan-200 shadow-sm">
+          <span data-i18n="tabAi">هوش مصنوعی</span>
+        </button>
+        <button id="tabBtn_palette" onclick="switchInspectorTab('palette')" class="py-2 px-2 rounded-xl text-xs font-semibold transition text-slate-300 hover:text-white">
+          <span data-i18n="tabPalette">رنگ و پالت</span>
+        </button>
+        <button id="tabBtn_io" onclick="switchInspectorTab('io')" class="py-2 px-2 rounded-xl text-xs font-semibold transition text-slate-300 hover:text-white">
+          <span data-i18n="tabIo">ورودی / خروجی</span>
+        </button>
+      </div>
+
+      <!-- ==================== TAB 1: AI SPRITE GENERATOR ==================== -->
+      <div id="tabPanel_ai" class="flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <h2 data-i18n="aiSectionTitle" class="text-xs sm:text-sm font-bold text-white">تولید اسپرایت با AI</h2>
+          <span id="pipelineModeBadge" dir="ltr" class="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-cyan-400/15 text-cyan-200 border border-cyan-300/30">
+            Matrix (16×)
+          </span>
+        </div>
+
+        <textarea
+          id="aiPromptInput"
+          rows="2"
+          data-i18n-placeholder="aiPromptPlaceholder"
+          placeholder="مثلاً: شمشیر الماسی آبی، کلاهخود اژدها، یا معجون جادویی..."
+          class="w-full rounded-xl liquid-glass-sub focus:border-cyan-400 text-xs text-white p-2.5 outline-none transition resize-none placeholder:text-slate-400"
+        ></textarea>
+
+        <!-- Offline Quick Templates -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <span data-i18n="offlinePresetsLabel" class="text-[11px] text-slate-300">نمونه‌های آماده (تست فوری):</span>
+            <span data-i18n="offlineSmartBadge" class="text-[10px] text-emerald-300">آفلاین + هوشمند</span>
+          </div>
+          <div id="offlinePresetsGrid" class="grid grid-cols-2 gap-1.5">
+            <!-- Populated dynamically with live pixel thumbnails -->
+          </div>
+        </div>
+
+        <!-- Custom Liquid Glass Dropdowns: Art Style & Max Colors -->
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <span data-i18n="artStyleLabel" class="block text-[11px] text-slate-300 mb-1">سبک هنری:</span>
+            <div id="ddMount_artStyle"></div>
+          </div>
+          <div>
+            <span data-i18n="maxColorsLabel" class="block text-[11px] text-slate-300 mb-1">سقف تعداد رنگ:</span>
+            <div id="ddMount_maxColors"></div>
+          </div>
+        </div>
+
+        <!-- Primary Liquid Glass Sheen Generate Button -->
+        <button
+          id="btnGenerateAI"
+          onclick="generateSpriteWithAI()"
+          class="glass-sheen w-full py-2.5 px-4 rounded-xl font-bold text-xs text-slate-950 bg-gradient-to-r from-cyan-300 via-sky-300 to-indigo-300 hover:brightness-110 active:scale-[0.99] transition flex items-center justify-center gap-2 shadow-lg shadow-cyan-950/60 cursor-pointer"
+        >
+          <svg id="aiGenIcon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <svg id="aiGenSpinner" class="w-4 h-4 animate-spin hidden" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+          </svg>
+          <span id="aiGenBtnLabel" data-i18n="generateAiBtn">تولید اسپرایت با هوش مصنوعی</span>
+        </button>
+
+        <div class="liquid-glass-sub rounded-xl p-2.5 text-[10px] text-slate-300/85 leading-relaxed">
+          <span data-i18n="aiPipelineNote">
+            • ابعاد ۱۶× و ۳۲×: تولید ماتریس پیکسلی مستقیم • ابعاد ۶۴× تا ۲۵۶×: رندر وکتور شارپ + کوانتیزه پالت پیکسلی
+          </span>
+        </div>
+      </div>
+
+      <!-- ==================== TAB 2: COLOR & HEXAGONAL HONEYCOMB PALETTE ==================== -->
+      <div id="tabPanel_palette" class="hidden flex-col gap-3">
+
+        <!-- Interactive 7-Ring Hexagonal Honeycomb Color Selector -->
+        <div class="liquid-glass-sub rounded-2xl p-3 flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <span data-i18n="hexSelectorTitle" class="text-xs font-bold text-cyan-200">انتخابگر رنگ کندویی (Hexagon Wheel)</span>
+            <span id="hexHoverBadge" dir="ltr" class="text-[10px] font-mono px-2 py-0.5 rounded-md bg-cyan-400/20 text-cyan-200 border border-cyan-300/35 opacity-0 transition-opacity">
+              #FFFFFF
+            </span>
+          </div>
+
+          <!-- 127-Cell Regular Hexagonal Honeycomb + Monochrome Row -->
+          <div class="relative flex items-center justify-center py-0.5">
+            <svg id="hexHoneycombSvg" viewBox="-122 -114 244 244" class="w-full max-w-[244px] h-auto select-none overflow-visible">
+              <g id="hexCellsGroup"></g>
+              <g id="hexMonoGroup"></g>
+              <polygon id="hexSelectionRing" points="" fill="none" stroke="#ffffff" stroke-width="2.3" stroke-linejoin="round" pointer-events="none" />
+            </svg>
+          </div>
+
+          <!-- Primary/Secondary Swatches + Swap + Editable HEX + Fine-Tune Native Picker -->
+          <div class="flex items-center justify-between gap-2 pt-2 border-t border-white/10">
+            <div class="flex items-center gap-2">
+              <!-- Overlapping Primary & Secondary Swatches -->
+              <div class="relative w-11 h-10 flex-shrink-0">
+                <button
+                  id="secondaryColorSwatch"
+                  onclick="swapPrimarySecondaryColors()"
+                  title="Secondary Color (Click to Swap)"
+                  class="absolute bottom-0 end-0 w-7 h-7 rounded-lg border-2 border-white/40 shadow-md transition-transform hover:scale-105"
+                  style="background-color: #0f172a;"
+                ></button>
+                <label
+                  id="primaryColorSwatch"
+                  title="Primary Color (Click for Fine-Tune)"
+                  class="absolute top-0 start-0 w-8 h-8 rounded-xl border-2 border-white shadow-lg cursor-pointer transition-transform hover:scale-105 overflow-hidden"
+                  style="background-color: #38bdf8;"
+                >
+                  <input type="color" id="fineTuneColorInput" value="#38bdf8" oninput="setPrimaryColor(this.value)" class="opacity-0 w-full h-full cursor-pointer" />
+                </label>
+              </div>
+
+              <button onclick="swapPrimarySecondaryColors()" title="Swap Colors (X)" class="p-1.5 rounded-lg liquid-glass-sub hover:border-cyan-400/45 text-xs text-slate-200 transition">
+                ⇄
+              </button>
+
+              <!-- Editable #HEX Input -->
+              <div dir="ltr" class="liquid-glass-sub focus-within:border-cyan-400 rounded-xl px-2.5 py-1.5">
+                <input
+                  id="hexCodeInput"
+                  type="text"
+                  value="#38BDF8"
+                  maxlength="7"
+                  onchange="onManualHexInput(this.value)"
+                  class="w-16 bg-transparent font-mono text-xs font-bold text-white uppercase outline-none"
+                />
+              </div>
+            </div>
+
+            <!-- Target Selector (Primary vs Secondary click mode) -->
+            <div dir="ltr" class="flex items-center liquid-glass-sub p-0.5 rounded-xl text-[10px] font-mono font-bold">
+              <button id="targetColorBtn_primary" onclick="setHexClickTarget('primary')" class="px-2 py-1 rounded-lg bg-cyan-400 text-slate-950">1st</button>
+              <button id="targetColorBtn_secondary" onclick="setHexClickTarget('secondary')" class="px-2 py-1 rounded-lg text-slate-300 hover:text-white">2nd</button>
+            </div>
+          </div>
+
+          <!-- Smart 5-Step Hue-Shifted Color Ramp -->
+          <div class="pt-1.5">
+            <div class="flex items-center justify-between mb-1">
+              <span data-i18n="hueRampTitle" class="text-[11px] text-slate-300">پله سایه‌زنی هوشمند (Hue-Shifted Ramp):</span>
+              <span class="text-[9px] font-mono text-cyan-300">Shadow → Highlight</span>
+            </div>
+            <div id="hueShiftedRampGrid" class="grid grid-cols-5 gap-1.5">
+              <!-- Populated dynamically with 5 hue-shifted swatches -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Current Sprite Auto-Extracted Colors -->
+        <div class="liquid-glass-sub rounded-2xl p-2.5">
+          <div class="flex items-center justify-between mb-1.5">
+            <span data-i18n="spriteColorsTitle" class="text-[11px] font-semibold text-slate-200">پالت رنگ‌های اسپرایت فعلی:</span>
+            <span id="spritePaletteBadge" class="text-[10px] font-mono text-cyan-300">0</span>
+          </div>
+          <div id="spriteExtractedPalette" class="flex flex-wrap gap-1.5 max-h-[68px] overflow-y-auto">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Standard Game Palettes (100% Custom Liquid Glass Dropdown) -->
+        <div class="liquid-glass-sub rounded-2xl p-2.5 flex flex-col gap-2">
+          <span data-i18n="gamePalettesTitle" class="text-[11px] font-semibold text-slate-200">پالت‌های استاندارد بازی‌سازی:</span>
+          <div id="ddMount_gamePalette"></div>
+          <div id="gamePaletteSwatches" class="flex flex-wrap gap-1.5 pt-0.5">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Global Brightness / Contrast / Saturation Adjustments -->
+        <div class="liquid-glass-sub rounded-2xl p-2.5 flex flex-col gap-2">
+          <span data-i18n="globalAdjustTitle" class="text-[11px] font-semibold text-slate-200">تنظیمات نور و رنگ کل اسپرایت:</span>
+          <div class="grid grid-cols-3 gap-1.5 text-center">
+            <div class="liquid-glass-sub rounded-xl p-1.5">
+              <span data-i18n="brightnessLabel" class="block text-[10px] text-slate-300 mb-1">روشنایی</span>
+              <div dir="ltr" class="flex items-center justify-center gap-1">
+                <button onclick="adjustGlobalSprite('brightness', -8)" class="w-6 h-6 rounded-lg bg-white/10 hover:bg-cyan-400/25 text-xs font-bold">-</button>
+                <button onclick="adjustGlobalSprite('brightness', 8)" class="w-6 h-6 rounded-lg bg-white/10 hover:bg-cyan-400/25 text-xs font-bold">+</button>
+              </div>
+            </div>
+            <div class="liquid-glass-sub rounded-xl p-1.5">
+              <span data-i18n="contrastLabel" class="block text-[10px] text-slate-300 mb-1">کنتراست</span>
+              <div dir="ltr" class="flex items-center justify-center gap-1">
+                <button onclick="adjustGlobalSprite('contrast', -8)" class="w-6 h-6 rounded-lg bg-white/10 hover:bg-cyan-400/25 text-xs font-bold">-</button>
+                <button onclick="adjustGlobalSprite('contrast', 8)" class="w-6 h-6 rounded-lg bg-white/10 hover:bg-cyan-400/25 text-xs font-bold">+</button>
+              </div>
+            </div>
+            <div class="liquid-glass-sub rounded-xl p-1.5">
+              <span data-i18n="saturationLabel" class="block text-[10px] text-slate-300 mb-1">غلظت رنگ</span>
+              <div dir="ltr" class="flex items-center justify-center gap-1">
+                <button onclick="adjustGlobalSprite('saturation', -10)" class="w-6 h-6 rounded-lg bg-white/10 hover:bg-cyan-400/25 text-xs font-bold">-</button>
+                <button onclick="adjustGlobalSprite('saturation', 10)" class="w-6 h-6 rounded-lg bg-white/10 hover:bg-cyan-400/25 text-xs font-bold">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== TAB 3: IMPORT / EXPORT & SPRITE SHEET ==================== -->
+      <div id="tabPanel_io" class="hidden flex-col gap-3">
+
+        <!-- Export Settings Card -->
+        <div class="liquid-glass-sub rounded-2xl p-3 flex flex-col gap-2.5">
+          <h3 data-i18n="exportSectionTitle" class="text-xs font-bold text-cyan-200">خروجی استاندارد بازی‌سازی</h3>
+
+          <div>
+            <span data-i18n="exportScaleLabel" class="block text-[11px] text-slate-300 mb-1">مقیاس خروجی تصویر:</span>
+            <div id="ddMount_exportScale"></div>
+          </div>
+
+          <button onclick="exportTransparentPNG()" class="glass-sheen w-full py-2.5 px-4 rounded-xl font-bold text-xs text-slate-950 bg-gradient-to-r from-emerald-400 to-teal-400 hover:brightness-110 transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/50 cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span data-i18n="downloadSinglePngBtn">دانلود PNG شفاف (فریم فعلی)</span>
+          </button>
+
+          <button onclick="exportSpriteSheetPNG()" class="w-full py-2 px-4 rounded-xl font-semibold text-xs liquid-glass-sub hover:border-cyan-400/50 text-cyan-200 transition flex items-center justify-center gap-2 cursor-pointer">
+            <span>🎞</span>
+            <span data-i18n="downloadSheetPngBtn">دانلود شیت انیمیشن (Sprite Sheet PNG)</span>
+          </button>
+
+          <button onclick="copyJsonMatrix()" class="w-full py-2 px-4 rounded-xl font-semibold text-xs liquid-glass-sub hover:border-indigo-400/50 text-slate-200 transition flex items-center justify-center gap-2 cursor-pointer">
+            <span class="font-mono text-cyan-300">{ }</span>
+            <span data-i18n="copyJsonBtn">کپی ماتریس کدهای رنگ (JSON)</span>
+          </button>
+        </div>
+
+        <!-- Image-to-Pixel Importer -->
+        <div class="liquid-glass-sub rounded-2xl p-3 flex flex-col gap-2.5">
+          <div class="flex items-center justify-between">
+            <h3 data-i18n="imgToPixelTitle" class="text-xs font-bold text-emerald-200">تبدیل عکس به پیکسل‌آرت</h3>
+            <span dir="ltr" class="text-[10px] font-mono text-slate-400">PNG / JPG</span>
+          </div>
+
+          <label class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-dashed border-cyan-400/40 bg-white/5 hover:bg-cyan-400/10 cursor-pointer transition text-center">
+            <svg class="w-4 h-4 text-cyan-300 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span data-i18n="chooseImageBtn" class="text-[11px] font-semibold text-slate-100">انتخاب عکس برای تبدیل</span>
+            <input type="file" id="imageUploadInput" accept="image/png,image/jpeg,image/webp" onchange="handleImageUpload(event)" class="hidden" />
+          </label>
+
+          <div class="flex items-center justify-between gap-2 text-[11px]">
+            <span data-i18n="quantizeColorsLabel" class="text-slate-300">تعداد رنگ پالت:</span>
+            <div class="flex items-center gap-2">
+              <input type="range" id="imgQuantizeRange" min="4" max="64" step="4" value="16" oninput="document.getElementById('imgQuantizeVal').textContent = this.value" class="w-24" />
+              <span id="imgQuantizeVal" dir="ltr" class="font-mono text-cyan-300 w-6 text-right">16</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Global Color Replacer -->
+        <div class="liquid-glass-sub rounded-2xl p-3 flex flex-col gap-2">
+          <h3 data-i18n="colorReplaceTitle" class="text-xs font-bold text-slate-100">جایگزینی رنگ در کل اسپرایت</h3>
+          <p data-i18n="colorReplaceDesc" class="text-[10px] text-slate-300/80">
+            تمام پیکسل‌های هم‌رنگ با رنگ دوم (2nd) را به رنگ اول (1st) تغییر می‌دهد:
+          </p>
+          <button onclick="replaceSecondaryWithPrimary()" class="w-full py-2 px-3 rounded-xl liquid-glass-sub hover:border-cyan-400/50 text-xs font-semibold text-cyan-200 transition flex items-center justify-center gap-2">
+            <span id="repFromDot" class="w-3.5 h-3.5 rounded border border-white/40 inline-block" style="background-color:#0f172a;"></span>
+            <span>→</span>
+            <span id="repToDot" class="w-3.5 h-3.5 rounded border border-white/40 inline-block" style="background-color:#38bdf8;"></span>
+            <span data-i18n="replaceColorBtn">اعمال جایگزینی رنگ</span>
+          </button>
+        </div>
+      </div>
+
+    </aside>
+  </main>
+
+  <!-- ==================== AI SETTINGS MODAL (THICK LIQUID GLASS) ==================== -->
+  <div id="apiModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-md p-4">
+    <div class="liquid-glass rounded-3xl max-w-md w-full p-5 flex flex-col gap-3.5">
+      <div class="flex items-center justify-between border-b border-white/15 pb-3">
+        <h3 data-i18n="apiModalTitle" class="text-sm font-bold text-white">تنظیمات اتصال هوش مصنوعی (AI)</h3>
+        <button onclick="closeModal('apiModal')" class="w-7 h-7 rounded-lg liquid-glass-sub text-slate-300 hover:text-white flex items-center justify-center">✕</button>
+      </div>
+
+      <p data-i18n="apiModalDesc" class="text-xs text-slate-200/90 leading-relaxed">
+        در محیط پیش‌نمایش، اتصال هوش مصنوعی به‌صورت خودکار فعال است. برای اجرای مستقل فایل HTML، کلید رایگان Google Gemini یا OpenRouter را وارد کنید:
+      </p>
+
+      <div class="flex flex-col gap-3">
+        <div>
+          <label data-i18n="apiProviderLabel" class="block text-[11px] text-slate-300 mb-1">سرویس‌دهنده هوش مصنوعی:</label>
+          <div id="ddMount_apiProvider"></div>
+        </div>
+
+        <div>
+          <label data-i18n="apiKeyLabel" class="block text-[11px] text-slate-300 mb-1">کلید API (اختیاری در محیط پیش‌نمایش):</label>
+          <input id="apiKeyInput" type="password" dir="ltr" placeholder="AIzaSy... / sk-or-v1-..." class="w-full rounded-xl liquid-glass-sub focus:border-cyan-400 text-xs font-mono text-white p-2.5 outline-none" />
+        </div>
+
+        <div>
+          <label data-i18n="apiModelLabel" class="block text-[11px] text-slate-300 mb-1">شناسه مدل (Model ID):</label>
+          <input id="apiModelInput" type="text" dir="ltr" value="gemini-3-flash-preview" class="w-full rounded-xl liquid-glass-sub focus:border-cyan-400 text-xs font-mono text-white p-2.5 outline-none" />
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-white/15">
+        <button onclick="resetApiConfig()" data-i18n="resetDefaultBtn" class="px-3 py-1.5 rounded-xl text-xs text-slate-300 hover:text-white transition">بازنشانی پیش‌فرض</button>
+        <button onclick="saveApiConfig()" data-i18n="saveSettingsBtn" class="glass-sheen px-4 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-400 to-emerald-400 text-slate-950 hover:brightness-110 transition">ذخیره تنظیمات</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CLEAR CANVAS CONFIRMATION MODAL ==================== -->
+  <div id="confirmModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-md p-4">
+    <div class="liquid-glass rounded-3xl max-w-sm w-full p-5 flex flex-col gap-3.5">
+      <h3 data-i18n="clearModalTitle" class="text-sm font-bold text-white">پاک کردن بوم فعلی</h3>
+      <p data-i18n="clearModalDesc" class="text-xs text-slate-200/90 leading-relaxed">
+        آیا مطمئن هستید که می‌خواهید تمام پیکسل‌های این فریم را پاک کنید؟ (با Ctrl+Z قابل بازگردانی است)
+      </p>
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeModal('confirmModal')" data-i18n="cancelBtn" class="px-3.5 py-1.5 rounded-xl text-xs liquid-glass-sub text-slate-200 hover:bg-white/15">انصراف</button>
+        <button onclick="confirmClearCanvas()" data-i18n="confirmClearBtn" class="px-4 py-1.5 rounded-xl text-xs font-bold bg-rose-500 text-white hover:bg-rose-400">پاک کردن</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== FLOATING LIQUID GLASS TOASTS ==================== -->
+  <div id="toastContainer" class="fixed bottom-4 left-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- ==================== CORE STUDIO ENGINE SCRIPT ==================== -->
+  <script>
+    /**
+     * =========================================================================
+     * 1. BILINGUAL DICTIONARY (PERSIAN RTL & ENGLISH LTR)
+     * =========================================================================
+     */
+    const I18N = {
+      fa: {
+        appTitle: 'کارگاه اسپرایت پیکسلی',
+        appSubtitle: 'استودیو طراحی پیکسلی و تولید هوشمند اسپرایت',
+        undoTip: 'بازگردانی (Ctrl+Z)',
+        redoTip: 'تکرار مجدد (Ctrl+Y)',
+        gridTip: 'خطوط شبکه (#)',
+        symmetryTip: 'حالت تقارن (OFF / X / Y / XY)',
+        aiSettingsBtn: 'تنظیمات AI',
+        headerExportBtn: 'خروجی PNG',
+        toolsHeader: 'ابزارها',
+        toolPencil: 'قلم',
+        toolEraser: 'پاک‌کن',
+        toolBucket: 'سطل',
+        toolPicker: 'رنگ‌گیر',
+        toolLine: 'خط',
+        toolRect: 'مربع',
+        toolCircle: 'دایره',
+        toolShade: 'سایه',
+        toolDither: 'دیتر',
+        toolPan: 'جابجایی',
+        tipPencil: 'قلم طراحی (P)',
+        tipEraser: 'پاک‌کن (E)',
+        tipBucket: 'سطل رنگ (G)',
+        tipPicker: 'رنگ‌گیر / قطره‌چکان (I)',
+        tipLine: 'خط صاف (L)',
+        tipRect: 'مربع / مستطیل (R)',
+        tipCircle: 'دایره (C)',
+        tipShade: 'سایه‌زنی روشن/تیره (S)',
+        tipDither: 'قلم دیتر شطرنجی دو رنگ (D)',
+        tipPan: 'جابجایی بوم (H یا Space)',
+        brushSizeLabel: 'اندازه قلم:',
+        quickTransformsLabel: 'تغییرات سریع و افکت:',
+        flipHBtn: 'قرینه افقی',
+        flipVBtn: 'قرینه عمودی',
+        rotate90Btn: 'چرخش ۹۰°',
+        autoOutlineBtn: 'دورگیری',
+        clearCanvasBtn: 'پاک کردن بوم',
+        livePreviewLabel: 'پیش‌نمایش زنده',
+        seamlessTileTag: 'کاشی بی‌درز ۳×۳',
+        playAnimTip: 'پخش/توقف انیمیشن',
+        onionSkinTip: 'نمایش شبح فریم قبلی (Onion Skin)',
+        onionSkinBtn: 'پوست‌پیازی',
+        stageHint: 'لمس یا کلیک برای طراحی • اسکرول برای زوم • Space+درگ برای جابجایی',
+        tabAi: 'هوش مصنوعی',
+        tabPalette: 'رنگ و پالت',
+        tabIo: 'ورودی / خروجی',
+        aiSectionTitle: 'تولید اسپرایت با AI',
+        aiPromptPlaceholder: 'مثلاً: شمشیر الماسی آبی، کلاهخود اژدها، یا معجون جادویی...',
+        offlinePresetsLabel: 'نمونه‌های آماده (تست فوری):',
+        offlineSmartBadge: 'آفلاین + هوشمند',
+        artStyleLabel: 'سبک هنری:',
+        maxColorsLabel: 'سقف تعداد رنگ:',
+        generateAiBtn: 'تولید اسپرایت با هوش مصنوعی',
+        generatingAiBtn: 'در حال طراحی پیکسل‌ها...',
+        aiPipelineNote: '• ابعاد ۱۶× و ۳۲×: تولید ماتریس پیکسلی مستقیم • ابعاد ۶۴× تا ۲۵۶×: رندر وکتور شارپ + کوانتیزه پالت پیکسلی',
+        hexSelectorTitle: 'انتخابگر رنگ کندویی (Hexagon Wheel)',
+        hueRampTitle: 'پله سایه‌زنی هوشمند (Hue-Shifted Ramp):',
+        spriteColorsTitle: 'پالت رنگ‌های اسپرایت فعلی:',
+        gamePalettesTitle: 'پالت‌های استاندارد بازی‌سازی:',
+        globalAdjustTitle: 'تنظیمات نور و رنگ کل اسپرایت:',
+        brightnessLabel: 'روشنایی',
+        contrastLabel: 'کنتراست',
+        saturationLabel: 'غلظت رنگ',
+        exportSectionTitle: 'خروجی استاندارد بازی‌سازی',
+        exportScaleLabel: 'مقیاس خروجی تصویر:',
+        downloadSinglePngBtn: 'دانلود PNG شفاف (فریم فعلی)',
+        downloadSheetPngBtn: 'دانلود شیت انیمیشن (Sprite Sheet PNG)',
+        copyJsonBtn: 'کپی ماتریس کدهای رنگ (JSON)',
+        imgToPixelTitle: 'تبدیل عکس به پیکسل‌آرت',
+        chooseImageBtn: 'انتخاب عکس برای تبدیل',
+        quantizeColorsLabel: 'تعداد رنگ پالت:',
+        colorReplaceTitle: 'جایگزینی رنگ در کل اسپرایت',
+        colorReplaceDesc: 'تمام پیکسل‌های هم‌رنگ با رنگ دوم (2nd) را به رنگ اول (1st) تغییر می‌دهد:',
+        replaceColorBtn: 'اعمال جایگزینی رنگ',
+        apiModalTitle: 'تنظیمات اتصال هوش مصنوعی (AI)',
+        apiModalDesc: 'در محیط پیش‌نمایش، اتصال هوش مصنوعی به‌صورت خودکار فعال است. برای اجرای مستقل فایل HTML، کلید رایگان Google Gemini یا OpenRouter را وارد کنید:',
+        apiProviderLabel: 'سرویس‌دهنده هوش مصنوعی:',
+        apiKeyLabel: 'کلید API (اختیاری در محیط پیش‌نمایش):',
+        apiModelLabel: 'شناسه مدل (Model ID):',
+        resetDefaultBtn: 'بازنشانی پیش‌فرض',
+        saveSettingsBtn: 'ذخیره تنظیمات',
+        clearModalTitle: 'پاک کردن بوم فعلی',
+        clearModalDesc: 'آیا مطمئن هستید که می‌خواهید تمام پیکسل‌های این فریم را پاک کنید؟ (با Ctrl+Z قابل بازگردانی است)',
+        cancelBtn: 'انصراف',
+        confirmClearBtn: 'پاک کردن',
+        presets: {
+          sword: 'شمشیر الماسی',
+          helmet: 'کلاهخود اژدها',
+          shield: 'سپر طلایی',
+          potion: 'معجون جادویی'
+        },
+        dropdowns: {
+          artStyle: [
+            { value: 'RPG Item', label: 'آیتم RPG' },
+            { value: 'Minecraft Texture', label: 'بافت ماینکرفت' },
+            { value: 'Retro 16-Bit', label: 'رترو ۱۶ بیتی' },
+            { value: 'Character / Creature', label: 'کاراکتر / هیولا' },
+            { value: 'Sci-Fi Icon', label: 'آیکون علمی‌تخیلی' }
+          ],
+          maxColors: [
+            { value: '8', label: '۸ رنگ (8 Colors)' },
+            { value: '16', label: '۱۶ رنگ (16 Colors)' },
+            { value: '32', label: '۳۲ رنگ (32 Colors)' }
+          ],
+          gamePalette: [
+            { value: 'pico8', label: 'PICO-8 (16)' },
+            { value: 'endesga32', label: 'Endesga 32' },
+            { value: 'minecraft', label: 'Minecraft Classic' },
+            { value: 'gameboy', label: 'GameBoy 4-Shade' },
+            { value: 'cyber', label: 'Cyber Neon' }
+          ],
+          exportScale: [
+            { value: '1', label: '۱× اندازه واقعی (1× Native)' },
+            { value: '4', label: '۴× بزرگ‌نمایی شارپ (4× Crisp)' },
+            { value: '8', label: '۸× بزرگ‌نمایی تیز (8× Sharp)' },
+            { value: '16', label: '۱۶× کیفیت بالا HD (16× HD)' }
+          ],
+          apiProvider: [
+            { value: 'gemini', label: 'Google Gemini API (پیشنهادی - رایگان در AI Studio)' },
+            { value: 'openrouter', label: 'OpenRouter API' }
+          ]
+        },
+        toasts: {
+          enterPrompt: 'لطفاً ابتدا توصیف اسپرایت را بنویسید.',
+          aiSuccess: 'اسپرایت هوشمند با موفقیت ساخته شد!',
+          aiError: 'خطا در اتصال هوش مصنوعی. از نمونه‌های آماده استفاده کنید یا تنظیمات AI را بررسی نمایید.',
+          presetLoaded: 'نمونه آماده بارگذاری شد.',
+          pngDownloaded: 'فایل PNG با پس‌زمینه شفاف دانلود شد.',
+          sheetDownloaded: 'شیت انیمیشن PNG دانلود شد.',
+          jsonCopied: 'ماتریس JSON در حافظه کپی شد.',
+          imgConverted: 'تصویر به پیکسل‌آرت تبدیل شد.',
+          outlineApplied: 'دورگیری ۱ پیکسلی اعمال شد.',
+          colorReplaced: 'رنگ‌ها با موفقیت جایگزین شدند.',
+          canvasCleared: 'بوم پاک شد.',
+          emptyCanvas: 'بوم در حال حاضر خالی است!',
+          minOneFrame: 'حداقل یک فریم باید وجود داشته باشد.'
+        }
+      },
+      en: {
+        appTitle: 'AI Pixel Forge',
+        appSubtitle: 'Pixel Art & Intelligent AI Sprite Studio',
+        undoTip: 'Undo (Ctrl+Z)',
+        redoTip: 'Redo (Ctrl+Y)',
+        gridTip: 'Grid Lines (#)',
+        symmetryTip: 'Symmetry Mode (OFF / X / Y / XY)',
+        aiSettingsBtn: 'AI Settings',
+        headerExportBtn: 'Export PNG',
+        toolsHeader: 'Tools',
+        toolPencil: 'Pencil',
+        toolEraser: 'Eraser',
+        toolBucket: 'Bucket',
+        toolPicker: 'Picker',
+        toolLine: 'Line',
+        toolRect: 'Rect',
+        toolCircle: 'Circle',
+        toolShade: 'Shade',
+        toolDither: 'Dither',
+        toolPan: 'Pan',
+        tipPencil: 'Pencil Tool (P)',
+        tipEraser: 'Eraser Tool (E)',
+        tipBucket: 'Flood Fill Bucket (G)',
+        tipPicker: 'Eyedropper Picker (I)',
+        tipLine: 'Line Tool (L)',
+        tipRect: 'Rectangle Tool (R)',
+        tipCircle: 'Circle Tool (C)',
+        tipShade: 'Lighten/Darken Shade (S)',
+        tipDither: '2-Tone Checkerboard Dither (D)',
+        tipPan: 'Pan Viewport (H or Space)',
+        brushSizeLabel: 'Brush Size:',
+        quickTransformsLabel: 'Quick Transforms & FX:',
+        flipHBtn: 'Flip H',
+        flipVBtn: 'Flip V',
+        rotate90Btn: 'Rotate 90°',
+        autoOutlineBtn: 'Outline',
+        clearCanvasBtn: 'Clear Canvas',
+        livePreviewLabel: 'Live Preview',
+        seamlessTileTag: '3×3 Seamless Tile',
+        playAnimTip: 'Play/Pause Animation',
+        onionSkinTip: 'Previous Frame Onion Skin',
+        onionSkinBtn: 'Onion Skin',
+        stageHint: 'Touch or click to draw • Scroll to zoom • Space+Drag to pan',
+        tabAi: 'AI Generator',
+        tabPalette: 'Color & Palette',
+        tabIo: 'Import / Export',
+        aiSectionTitle: 'AI Sprite Generator',
+        aiPromptPlaceholder: 'e.g., Blue diamond sword, dragon helmet, or magic potion...',
+        offlinePresetsLabel: 'Quick Presets (Instant Test):',
+        offlineSmartBadge: 'Offline + Smart',
+        artStyleLabel: 'Art Style:',
+        maxColorsLabel: 'Max Colors:',
+        generateAiBtn: 'Generate Sprite with AI',
+        generatingAiBtn: 'Forging Pixels...',
+        aiPipelineNote: '• 16× & 32×: Direct pixel matrix generation • 64× to 256×: Crisp vector render + pixel palette quantization',
+        hexSelectorTitle: 'Hexagonal Honeycomb Color Selector',
+        hueRampTitle: 'Smart 5-Step Hue-Shifted Ramp:',
+        spriteColorsTitle: 'Current Sprite Colors:',
+        gamePalettesTitle: 'Standard Game Palettes:',
+        globalAdjustTitle: 'Global Sprite Light & Color:',
+        brightnessLabel: 'Brightness',
+        contrastLabel: 'Contrast',
+        saturationLabel: 'Saturation',
+        exportSectionTitle: 'Game-Ready Export',
+        exportScaleLabel: 'Export Resolution Scale:',
+        downloadSinglePngBtn: 'Download Transparent PNG (Frame)',
+        downloadSheetPngBtn: 'Download Animation Sprite Sheet',
+        copyJsonBtn: 'Copy Color Matrix (JSON)',
+        imgToPixelTitle: 'Image-to-Pixel Converter',
+        chooseImageBtn: 'Choose Image to Convert',
+        quantizeColorsLabel: 'Palette Colors:',
+        colorReplaceTitle: 'Global Color Replacer',
+        colorReplaceDesc: 'Replaces all pixels matching Secondary (2nd) with Primary (1st):',
+        replaceColorBtn: 'Apply Color Replace',
+        apiModalTitle: 'AI Connection Settings',
+        apiModalDesc: 'AI works automatically inside the preview environment. For local standalone usage, enter your free Google Gemini or OpenRouter API key:',
+        apiProviderLabel: 'AI Provider:',
+        apiKeyLabel: 'API Key (Optional in preview):',
+        apiModelLabel: 'Model ID:',
+        resetDefaultBtn: 'Reset Default',
+        saveSettingsBtn: 'Save Settings',
+        clearModalTitle: 'Clear Current Canvas',
+        clearModalDesc: 'Are you sure you want to clear all pixels in this frame? (Undoable with Ctrl+Z)',
+        cancelBtn: 'Cancel',
+        confirmClearBtn: 'Clear',
+        presets: {
+          sword: 'Diamond Sword',
+          helmet: 'Dragon Helmet',
+          shield: 'Golden Shield',
+          potion: 'Magic Potion'
+        },
+        dropdowns: {
+          artStyle: [
+            { value: 'RPG Item', label: 'RPG Item' },
+            { value: 'Minecraft Texture', label: 'Minecraft Texture' },
+            { value: 'Retro 16-Bit', label: 'Retro 16-Bit' },
+            { value: 'Character / Creature', label: 'Character / Creature' },
+            { value: 'Sci-Fi Icon', label: 'Sci-Fi Icon' }
+          ],
+          maxColors: [
+            { value: '8', label: '8 Colors' },
+            { value: '16', label: '16 Colors' },
+            { value: '32', label: '32 Colors' }
+          ],
+          gamePalette: [
+            { value: 'pico8', label: 'PICO-8 (16)' },
+            { value: 'endesga32', label: 'Endesga 32' },
+            { value: 'minecraft', label: 'Minecraft Classic' },
+            { value: 'gameboy', label: 'GameBoy 4-Shade' },
+            { value: 'cyber', label: 'Cyber Neon' }
+          ],
+          exportScale: [
+            { value: '1', label: '1× Actual Size (Native)' },
+            { value: '4', label: '4× Crisp' },
+            { value: '8', label: '8× Sharp' },
+            { value: '16', label: '16× Ultra HD' }
+          ],
+          apiProvider: [
+            { value: 'gemini', label: 'Google Gemini API (Recommended)' },
+            { value: 'openrouter', label: 'OpenRouter API' }
+          ]
+        },
+        toasts: {
+          enterPrompt: 'Please enter a sprite description first.',
+          aiSuccess: 'AI sprite forged successfully!',
+          aiError: 'AI connection failed. Try an offline preset or check AI settings.',
+          presetLoaded: 'Preset loaded onto canvas.',
+          pngDownloaded: 'Transparent PNG downloaded!',
+          sheetDownloaded: 'Animation Sprite Sheet downloaded!',
+          jsonCopied: 'JSON color matrix copied to clipboard.',
+          imgConverted: 'Image converted to pixel art!',
+          outlineApplied: '1px dark outline applied.',
+          colorReplaced: 'Colors replaced across sprite!',
+          canvasCleared: 'Canvas cleared.',
+          emptyCanvas: 'Canvas is already empty!',
+          minOneFrame: 'At least one animation frame is required.'
+        }
+      }
+    };
+
+    /**
+     * =========================================================================
+     * 2. STANDARD GAME PALETTES
+     * =========================================================================
+     */
+    const GAME_PALETTES = {
+      pico8: ['#000000','#1d2b53','#7e2553','#008751','#ab5236','#5f574f','#c2c3c7','#fff1e8','#ff004d','#ffa300','#ffec27','#00e436','#29adff','#83769c','#ff77a8','#ffccaa'],
+      endesga32: ['#be4a2f','#d77643','#ead4aa','#e4a672','#b86f50','#733e39','#3e2731','#a22633','#e43b44','#f77622','#feae34','#fee761','#63c74d','#3e8948','#265c42','#193c3e','#124e89','#0099db','#2ce8f5','#ffffff','#c0cbdc','#8b9bb4','#5a6988','#3a4466','#262b44','#181425','#ff0044','#68386c','#b55088','#f6757a','#e8b796','#c28569'],
+      minecraft: ['#1d1d21','#b02e26','#5e7c16','#835432','#3c44aa','#8932b8','#169c9c','#9d9d97','#474f52','#f38baa','#80c71f','#fed83d','#3ab3da','#c74ebd','#f9801d','#f9fffe'],
+      gameboy: ['#0f380f','#306230','#8bac0f','#9bbc0f'],
+      cyber: ['#050814','#141b41','#306bac','#6f9ceb','#98b9f2','#00f5d4','#00bbf9','#fee440','#f15bb5','#9b5de5','#ff2a6d','#ffffff']
+    };
+
+    /**
+     * =========================================================================
+     * 3. CORE STUDIO STATE (MULTI-FRAME + UINT32 PIXEL ENGINE)
+     * =========================================================================
+     */
+    const state = {
+      lang: 'fa',
+      gridSize: 16,
+      frames: [new Uint32Array(16 * 16)],
+      currentFrameIndex: 0,
+      onionSkin: false,
+      isPlayingAnim: false,
+      animFps: 6,
+      animPreviewFrame: 0,
+      animTimerId: null,
+      activeTool: 'pencil',
+      previousTool: 'pencil',
+      brushSize: 1,
+      primaryColor: '#38bdf8',
+      secondaryColor: '#0f172a',
+      hexClickTarget: 'primary',
+      symmetry: 'OFF',
+      showGrid: true,
+      tilePreview: false,
+      activeTab: 'ai',
+      artStyle: 'RPG Item',
+      maxColors: 16,
+      selectedGamePalette: 'pico8',
+      exportScale: 8,
+      spriteName: 'diamond_sword',
+      openDropdownId: null,
+      camera: {
+        zoom: 24,
+        panX: 0,
+        panY: 0
+      },
+      pointer: {
+        isDown: false,
+        button: 0,
+        isPanning: false,
+        spaceHeld: false,
+        panStartX: 0,
+        panStartY: 0,
+        camStartPanX: 0,
+        camStartPanY: 0,
+        startCell: null,
+        lastCell: null,
+        hoverCell: null,
+        shadeVisited: new Set()
+      },
+      history: [],
+      historyIndex: -1,
+      maxHistory: 30,
+      apiConfig: {
+        provider: 'gemini',
+        apiKey: '',
+        model: 'gemini-3-flash-preview'
+      }
+    };
+
+    function getActiveBuffer() {
+      return state.frames[state.currentFrameIndex];
+    }
+
+    function setActiveBuffer(buf) {
+      state.frames[state.currentFrameIndex] = buf;
+    }
+
+    const viewportCanvas = document.getElementById('viewportCanvas');
+    const vCtx = viewportCanvas.getContext('2d');
+    const offscreenCanvas = document.createElement('canvas');
+    const oCtx = offscreenCanvas.getContext('2d');
+    const onionCanvas = document.createElement('canvas');
+    const onionCtx = onionCanvas.getContext('2d');
+
+    const preview1x = document.getElementById('preview1x');
+    const p1Ctx = preview1x.getContext('2d');
+    const preview2x = document.getElementById('preview2x');
+    const p2Ctx = preview2x.getContext('2d');
+    const previewTile3x3 = document.getElementById('previewTile3x3');
+    const pTileCtx = previewTile3x3.getContext('2d');
+
+    /**
+     * =========================================================================
+     * 4. INITIALIZATION
+     * =========================================================================
+     */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSavedApiConfig();
+      buildHexagonalHoneycombWheel();
+      updateHueShiftedRamp(state.primaryColor);
+      renderOfflinePresetCards();
+      renderGamePaletteSwatches();
+      setLanguage('fa');
+
+      loadOfflinePreset('sword', true);
+      resizeViewportCanvas(true);
+      setupViewportEvents();
+      setupKeyboardShortcuts();
+      setupGlobalDropdownListeners();
+
+      window.addEventListener('resize', () => {
+        closeAllLiquidDropdowns();
+        resizeViewportCanvas(false);
+      });
+    });
+
+    /**
+     * =========================================================================
+     * 5. 100% CUSTOM LIQUID GLASS DROPDOWNS (.lg-select)
+     * =========================================================================
+     */
+    const DROPDOWN_CONFIGS = {
+      artStyle: {
+        mountId: 'ddMount_artStyle',
+        getValue: () => state.artStyle,
+        setValue: (v) => { state.artStyle = v; }
+      },
+      maxColors: {
+        mountId: 'ddMount_maxColors',
+        getValue: () => String(state.maxColors),
+        setValue: (v) => { state.maxColors = parseInt(v, 10); }
+      },
+      gamePalette: {
+        mountId: 'ddMount_gamePalette',
+        getValue: () => state.selectedGamePalette,
+        setValue: (v) => {
+          state.selectedGamePalette = v;
+          renderGamePaletteSwatches();
+        },
+        getSwatches: (val) => (GAME_PALETTES[val] || []).slice(0, 5)
+      },
+      exportScale: {
+        mountId: 'ddMount_exportScale',
+        getValue: () => String(state.exportScale),
+        setValue: (v) => { state.exportScale = parseInt(v, 10); }
+      },
+      apiProvider: {
+        mountId: 'ddMount_apiProvider',
+        getValue: () => state.apiConfig.provider,
+        setValue: (v) => {
+          state.apiConfig.provider = v;
+          const mInput = document.getElementById('apiModelInput');
+          if (mInput) mInput.value = v === 'openrouter' ? 'google/gemini-2.5-flash' : 'gemini-3-flash-preview';
+        }
+      }
+    };
+
+    function renderAllLiquidDropdowns() {
+      // Remove any detached floating menus first
+      document.querySelectorAll('.lg-select-menu').forEach(m => m.remove());
+      state.openDropdownId = null;
+
+      Object.entries(DROPDOWN_CONFIGS).forEach(([id, cfg]) => {
+        const mount = document.getElementById(cfg.mountId);
+        if (!mount) return;
+        const items = I18N[state.lang].dropdowns[id] || [];
+        const currentVal = cfg.getValue();
+        const selectedItem = items.find(it => it.value === currentVal) || items[0];
+
+        mount.innerHTML = '';
+
+        // Trigger Pill
+        const trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.id = `lgTrigger_${id}`;
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.className = 'lg-select-trigger w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs font-medium text-slate-100 cursor-pointer';
+
+        const leftWrap = document.createElement('div');
+        leftWrap.className = 'flex items-center gap-2 min-w-0';
+
+        if (cfg.getSwatches && selectedItem) {
+          const dots = document.createElement('div');
+          dots.className = 'flex items-center -space-x-1 rtl:space-x-reverse flex-shrink-0';
+          cfg.getSwatches(selectedItem.value).forEach(hex => {
+            const dot = document.createElement('span');
+            dot.className = 'w-2.5 h-2.5 rounded-full border border-black/60';
+            dot.style.backgroundColor = hex;
+            dots.appendChild(dot);
+          });
+          leftWrap.appendChild(dots);
+        }
+
+        const labelSpan = document.createElement('span');
+        labelSpan.className = 'truncate';
+        labelSpan.textContent = selectedItem ? selectedItem.label : '';
+        leftWrap.appendChild(labelSpan);
+
+        const chevron = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        chevron.setAttribute('viewBox', '0 0 20 20');
+        chevron.setAttribute('fill', 'currentColor');
+        chevron.setAttribute('class', 'w-4 h-4 text-cyan-300 flex-shrink-0 transition-transform duration-200');
+        chevron.innerHTML = '<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />';
+
+        trigger.appendChild(leftWrap);
+        trigger.appendChild(chevron);
+        trigger.onclick = (e) => {
+          e.stopPropagation();
+          toggleLiquidDropdown(id);
+        };
+        mount.appendChild(trigger);
+
+        // Floating Elevated Glass Menu (appended to body so parent overflow/backdrop-filter never clips it)
+        const menu = document.createElement('div');
+        menu.id = `lgMenu_${id}`;
+        menu.className = 'lg-select-menu dd-closed rounded-2xl p-1.5 flex flex-col gap-0.5';
+
+        items.forEach(item => {
+          const isSelected = item.value === currentVal;
+          const opt = document.createElement('button');
+          opt.type = 'button';
+          opt.className = `lg-select-option w-full px-3 py-2 rounded-xl text-xs font-medium flex items-center justify-between gap-2 text-start cursor-pointer ${isSelected ? 'is-selected font-bold' : 'text-slate-200'}`;
+
+          const optLeft = document.createElement('div');
+          optLeft.className = 'flex items-center gap-2 min-w-0';
+
+          if (cfg.getSwatches) {
+            const dots = document.createElement('div');
+            dots.className = 'flex items-center gap-0.5 flex-shrink-0';
+            cfg.getSwatches(item.value).forEach(hex => {
+              const dot = document.createElement('span');
+              dot.className = 'w-2 h-2 rounded-full border border-white/25';
+              dot.style.backgroundColor = hex;
+              dots.appendChild(dot);
+            });
+            optLeft.appendChild(dots);
+          }
+
+          const optText = document.createElement('span');
+          optText.className = 'truncate';
+          optText.textContent = item.label;
+          optLeft.appendChild(optText);
+
+          opt.appendChild(optLeft);
+          if (isSelected) {
+            const chk = document.createElement('span');
+            chk.className = 'text-emerald-300 font-mono text-xs flex-shrink-0';
+            chk.textContent = '✓';
+            opt.appendChild(chk);
+          }
+
+          opt.onclick = (e) => {
+            e.stopPropagation();
+            cfg.setValue(item.value);
+            closeAllLiquidDropdowns();
+            renderAllLiquidDropdowns();
+          };
+          menu.appendChild(opt);
+        });
+
+        document.body.appendChild(menu);
+      });
+    }
+
+    function toggleLiquidDropdown(id) {
+      const wasOpen = state.openDropdownId === id;
+      closeAllLiquidDropdowns();
+      if (wasOpen) return;
+
+      const trigger = document.getElementById(`lgTrigger_${id}`);
+      const menu = document.getElementById(`lgMenu_${id}`);
+      if (!trigger || !menu) return;
+
+      state.openDropdownId = id;
+      trigger.setAttribute('aria-expanded', 'true');
+      const chev = trigger.querySelector('svg');
+      if (chev) chev.style.transform = 'rotate(180deg)';
+
+      // Measure & clamp cleanly inside viewport
+      const rect = trigger.getBoundingClientRect();
+      const menuWidth = Math.max(rect.width, 200);
+      menu.style.width = `${menuWidth}px`;
+
+      const estimatedHeight = menu.children.length * 36 + 14;
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const openUp = spaceBelow < estimatedHeight && rect.top > estimatedHeight;
+
+      let leftPos = rect.left;
+      if (leftPos + menuWidth > window.innerWidth - 10) {
+        leftPos = Math.max(10, window.innerWidth - menuWidth - 10);
+      }
+      menu.style.left = `${Math.max(10, leftPos)}px`;
+
+      if (openUp) {
+        menu.classList.add('dd-up');
+        menu.style.bottom = `${window.innerHeight - rect.top + 6}px`;
+        menu.style.top = 'auto';
+      } else {
+        menu.classList.remove('dd-up');
+        menu.style.top = `${rect.bottom + 6}px`;
+        menu.style.bottom = 'auto';
+      }
+
+      menu.classList.remove('dd-closed');
+      menu.classList.add('dd-open');
+    }
+
+    function closeAllLiquidDropdowns() {
+      if (!state.openDropdownId) return;
+      Object.keys(DROPDOWN_CONFIGS).forEach(id => {
+        const trigger = document.getElementById(`lgTrigger_${id}`);
+        const menu = document.getElementById(`lgMenu_${id}`);
+        if (trigger) {
+          trigger.setAttribute('aria-expanded', 'false');
+          const chev = trigger.querySelector('svg');
+          if (chev) chev.style.transform = 'rotate(0deg)';
+        }
+        if (menu) {
+          menu.classList.remove('dd-open');
+          menu.classList.add('dd-closed');
+        }
+      });
+      state.openDropdownId = null;
+    }
+
+    function setupGlobalDropdownListeners() {
+      document.addEventListener('click', (e) => {
+        if (!state.openDropdownId) return;
+        if (!e.target.closest('.lg-select-trigger') && !e.target.closest('.lg-select-menu')) {
+          closeAllLiquidDropdowns();
+        }
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeAllLiquidDropdowns();
+          closeModal('apiModal');
+          closeModal('confirmModal');
+        }
+      });
+    }
+
+    /**
+     * =========================================================================
+     * 6. 7-RING REGULAR HEXAGONAL HONEYCOMB COLOR SELECTOR (127 CELLS)
+     * =========================================================================
+     */
+    const hexCellRegistry = [];
+
+    function hsvToHex(h, s, v) {
+      h = ((h % 360) + 360) % 360;
+      s = Math.max(0, Math.min(1, s));
+      v = Math.max(0, Math.min(1, v));
+      const c = v * s;
+      const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+      const m = v - c;
+      let r1 = 0, g1 = 0, b1 = 0;
+
+      if (h < 60) { r1 = c; g1 = x; b1 = 0; }
+      else if (h < 120) { r1 = x; g1 = c; b1 = 0; }
+      else if (h < 180) { r1 = 0; g1 = c; b1 = x; }
+      else if (h < 240) { r1 = 0; g1 = x; b1 = c; }
+      else if (h < 300) { r1 = x; g1 = 0; b1 = c; }
+      else { r1 = c; g1 = 0; b1 = x; }
+
+      const r = Math.round((r1 + m) * 255);
+      const g = Math.round((g1 + m) * 255);
+      const b = Math.round((b1 + m) * 255);
+      return '#' + [r, g, b].map(n => n.toString(16).padStart(2, '0')).join('');
+    }
+
+    function getPointyHexPolygonPoints(cx, cy, radius) {
+      const pts = [];
+      for (let i = 0; i < 6; i++) {
+        const angleRad = ((60 * i + 30) * Math.PI) / 180;
+        const px = (cx + radius * Math.cos(angleRad)).toFixed(2);
+        const py = (cy + radius * Math.sin(angleRad)).toFixed(2);
+        pts.push(`${px},${py}`);
+      }
+      return pts.join(' ');
+    }
+
+    function buildHexagonalHoneycombWheel() {
+      const cellsGroup = document.getElementById('hexCellsGroup');
+      const monoGroup = document.getElementById('hexMonoGroup');
+      const badge = document.getElementById('hexHoverBadge');
+      cellsGroup.innerHTML = '';
+      monoGroup.innerHTML = '';
+      hexCellRegistry.length = 0;
+
+      const R = 10.2;
+      const hexWidth = Math.sqrt(3) * R;
+      const rowHeight = 1.5 * R;
+      const maxRing = 6; // 7 outer edges -> 127 total regular hexagons
+
+      for (let r = -maxRing; r <= maxRing; r++) {
+        const qMin = Math.max(-maxRing, -maxRing - r);
+        const qMax = Math.min(maxRing, maxRing - r);
+
+        for (let q = qMin; q <= qMax; q++) {
+          const cx = hexWidth * (q + r / 2);
+          const cy = rowHeight * r;
+          const ringDist = Math.max(Math.abs(q), Math.abs(r), Math.abs(q + r));
+
+          let hexColor = '#ffffff';
+          if (ringDist === 0) {
+            hexColor = '#ffffff';
+          } else {
+            // Exact directional orientation matching reference honeycomb:
+            // Top = Royal Blue, Top-Left = Cyan, Left = Pure Green,
+            // Bottom-Left = Yellow, Bottom-Right = Red, Right = Magenta
+            const thetaDeg = (Math.atan2(cy, cx) * 180) / Math.PI;
+            const hue = (305 + thetaDeg + 360) % 360;
+
+            let sat = 1.0;
+            let val = 1.0;
+            if (ringDist <= 4) {
+              sat = 0.22 + (ringDist / 4) * 0.78;
+              val = 1.0;
+            } else if (ringDist === 5) {
+              sat = 1.0;
+              val = 0.74;
+            } else {
+              sat = 0.96;
+              val = 0.43;
+            }
+            hexColor = hsvToHex(hue, sat, val);
+          }
+
+          const pointsStr = getPointyHexPolygonPoints(cx, cy, R + 0.16);
+          const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+          poly.setAttribute('points', pointsStr);
+          poly.setAttribute('fill', hexColor);
+          poly.setAttribute('stroke', 'rgba(4, 7, 15, 0.32)');
+          poly.setAttribute('stroke-width', '0.45');
+          poly.setAttribute('class', 'hex-cell');
+
+          poly.addEventListener('pointerenter', () => {
+            badge.textContent = hexColor.toUpperCase();
+            badge.style.opacity = '1';
+          });
+          poly.addEventListener('pointerleave', () => {
+            badge.style.opacity = '0';
+          });
+          poly.addEventListener('click', () => {
+            if (state.hexClickTarget === 'secondary') {
+              setSecondaryColor(hexColor);
+            } else {
+              setPrimaryColor(hexColor, pointsStr);
+              if (state.activeTool === 'eraser') selectTool('pencil');
+            }
+          });
+          poly.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            setSecondaryColor(hexColor);
+          });
+
+          cellsGroup.appendChild(poly);
+          hexCellRegistry.push({ hex: hexColor.toLowerCase(), points: pointsStr });
+        }
+      }
+
+      // 9-Cell Monochrome / Grayscale Row directly below the honeycomb
+      const monoColors = ['#ffffff', '#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155', '#1e293b', '#000000'];
+      const monoY = maxRing * rowHeight + 2.25 * R;
+
+      monoColors.forEach((mHex, idx) => {
+        const cx = (idx - 4) * hexWidth;
+        const pointsStr = getPointyHexPolygonPoints(cx, monoY, R + 0.16);
+        const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        poly.setAttribute('points', pointsStr);
+        poly.setAttribute('fill', mHex);
+        poly.setAttribute('stroke', 'rgba(56, 189, 248, 0.28)');
+        poly.setAttribute('stroke-width', '0.5');
+        poly.setAttribute('class', 'hex-cell');
+
+        poly.addEventListener('pointerenter', () => {
+          badge.textContent = mHex.toUpperCase();
+          badge.style.opacity = '1';
+        });
+        poly.addEventListener('pointerleave', () => {
+          badge.style.opacity = '0';
+        });
+        poly.addEventListener('click', () => {
+          if (state.hexClickTarget === 'secondary') {
+            setSecondaryColor(mHex);
+          } else {
+            setPrimaryColor(mHex, pointsStr);
+            if (state.activeTool === 'eraser') selectTool('pencil');
+          }
+        });
+        poly.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          setSecondaryColor(mHex);
+        });
+
+        monoGroup.appendChild(poly);
+        hexCellRegistry.push({ hex: mHex.toLowerCase(), points: pointsStr });
+      });
+
+      highlightNearestHexCell(state.primaryColor);
+    }
+
+    function highlightNearestHexCell(targetHex) {
+      const ring = document.getElementById('hexSelectionRing');
+      if (!ring || hexCellRegistry.length === 0) return;
+
+      const norm = normalizeHex(targetHex);
+      if (!norm) return;
+      const tr = parseInt(norm.slice(1, 3), 16);
+      const tg = parseInt(norm.slice(3, 5), 16);
+      const tb = parseInt(norm.slice(5, 7), 16);
+
+      let bestPoints = hexCellRegistry[0].points;
+      let bestDist = Infinity;
+
+      for (const item of hexCellRegistry) {
+        const ir = parseInt(item.hex.slice(1, 3), 16);
+        const ig = parseInt(item.hex.slice(3, 5), 16);
+        const ib = parseInt(item.hex.slice(5, 7), 16);
+        const dist = (tr - ir) ** 2 + (tg - ig) ** 2 + (tb - ib) ** 2;
+        if (dist < bestDist) {
+          bestDist = dist;
+          bestPoints = item.points;
+        }
+      }
+
+      ring.setAttribute('points', bestPoints);
+      const lum = (0.299 * tr + 0.587 * tg + 0.114 * tb) / 255;
+      ring.setAttribute('stroke', lum > 0.78 ? '#04070f' : '#ffffff');
+    }
+
+    function setPrimaryColor(hex, exactPoints = null) {
+      const norm = normalizeHex(hex);
+      if (!norm) return;
+      state.primaryColor = norm;
+      document.getElementById('primaryColorSwatch').style.backgroundColor = norm;
+      document.getElementById('fineTuneColorInput').value = norm;
+      document.getElementById('hexCodeInput').value = norm.toUpperCase();
+      document.getElementById('repToDot').style.backgroundColor = norm;
+
+      if (exactPoints) {
+        const ring = document.getElementById('hexSelectionRing');
+        ring.setAttribute('points', exactPoints);
+        const r = parseInt(norm.slice(1, 3), 16);
+        const g = parseInt(norm.slice(3, 5), 16);
+        const b = parseInt(norm.slice(5, 7), 16);
+        const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        ring.setAttribute('stroke', lum > 0.78 ? '#04070f' : '#ffffff');
+      } else {
+        highlightNearestHexCell(norm);
+      }
+
+      updateHueShiftedRamp(norm);
+      renderSpriteExtractedPalette();
+    }
+
+    function setSecondaryColor(hex) {
+      const norm = normalizeHex(hex);
+      if (!norm) return;
+      state.secondaryColor = norm;
+      document.getElementById('secondaryColorSwatch').style.backgroundColor = norm;
+      document.getElementById('repFromDot').style.backgroundColor = norm;
+    }
+
+    function swapPrimarySecondaryColors() {
+      const temp = state.primaryColor;
+      setPrimaryColor(state.secondaryColor);
+      setSecondaryColor(temp);
+    }
+
+    function setHexClickTarget(target) {
+      state.hexClickTarget = target;
+      const b1 = document.getElementById('targetColorBtn_primary');
+      const b2 = document.getElementById('targetColorBtn_secondary');
+      if (target === 'primary') {
+        b1.className = 'px-2 py-1 rounded-lg bg-cyan-400 text-slate-950';
+        b2.className = 'px-2 py-1 rounded-lg text-slate-300 hover:text-white';
+      } else {
+        b2.className = 'px-2 py-1 rounded-lg bg-indigo-400 text-slate-950';
+        b1.className = 'px-2 py-1 rounded-lg text-slate-300 hover:text-white';
+      }
+    }
+
+    function onManualHexInput(val) {
+      const norm = normalizeHex(val);
+      if (norm) setPrimaryColor(norm);
+      else document.getElementById('hexCodeInput').value = state.primaryColor.toUpperCase();
+    }
+
+    /**
+     * Smart 5-Step Hue-Shifted Color Ramp:
+     * Computes 2 cool-shifted shadows (-24%, -12% L, hue shifted toward 240° blue/purple),
+     * base color, and 2 warm-shifted highlights (+12%, +24% L, hue shifted toward 60° yellow).
+     */
+    function updateHueShiftedRamp(baseHex) {
+      const container = document.getElementById('hueShiftedRampGrid');
+      if (!container) return;
+      const norm = normalizeHex(baseHex) || '#38bdf8';
+      const r = parseInt(norm.slice(1, 3), 16);
+      const g = parseInt(norm.slice(3, 5), 16);
+      const b = parseInt(norm.slice(5, 7), 16);
+      const hsl = rgbToHsl(r, g, b);
+
+      const shiftTowardHue = (h, targetH, factor) => {
+        let diff = ((targetH - h + 540) % 360) - 180;
+        return (h + diff * factor + 360) % 360;
+      };
+
+      const steps = [
+        {
+          h: shiftTowardHue(hsl.h, 245, 0.24),
+          s: Math.min(100, hsl.s + 10),
+          l: Math.max(8, hsl.l - 24)
+        },
+        {
+          h: shiftTowardHue(hsl.h, 245, 0.12),
+          s: Math.min(100, hsl.s + 5),
+          l: Math.max(12, hsl.l - 12)
+        },
+        {
+          h: hsl.h,
+          s: hsl.s,
+          l: hsl.l,
+          isCenter: true
+        },
+        {
+          h: shiftTowardHue(hsl.h, 58, 0.12),
+          s: Math.max(12, hsl.s - 4),
+          l: Math.min(92, hsl.l + 12)
+        },
+        {
+          h: shiftTowardHue(hsl.h, 58, 0.24),
+          s: Math.max(10, hsl.s - 10),
+          l: Math.min(96, hsl.l + 24)
+        }
+      ];
+
+      container.innerHTML = '';
+      steps.forEach(st => {
+        const rgb = hslToRgb(st.h, st.s, st.l);
+        const stepHex = '#' + [rgb.r, rgb.g, rgb.b].map(v => v.toString(16).padStart(2, '0')).join('');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.style.backgroundColor = stepHex;
+        btn.title = stepHex.toUpperCase();
+        btn.className = `h-7 rounded-xl transition hover:scale-105 cursor-pointer ${st.isCenter ? 'ring-2 ring-white shadow-md' : 'border border-white/25'}`;
+        btn.onclick = () => {
+          setPrimaryColor(stepHex);
+          if (state.activeTool === 'eraser') selectTool('pencil');
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    /**
+     * =========================================================================
+     * 7. BILINGUAL SWITCHER & INSPECTOR TABS
+     * =========================================================================
+     */
+    function setLanguage(lang) {
+      state.lang = lang;
+      const dict = I18N[lang];
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
+
+      const bFa = document.getElementById('langBtn_fa');
+      const bEn = document.getElementById('langBtn_en');
+      if (lang === 'fa') {
+        bFa.className = 'px-2 py-0.5 rounded-lg text-[11px] font-bold transition bg-gradient-to-r from-cyan-400 to-indigo-400 text-slate-950 shadow';
+        bEn.className = 'px-2 py-0.5 rounded-lg text-[11px] font-bold transition text-slate-300 hover:text-white';
+      } else {
+        bEn.className = 'px-2 py-0.5 rounded-lg text-[11px] font-bold transition bg-gradient-to-r from-cyan-400 to-indigo-400 text-slate-950 shadow';
+        bFa.className = 'px-2 py-0.5 rounded-lg text-[11px] font-bold transition text-slate-300 hover:text-white';
+      }
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) el.textContent = dict[key];
+      });
+      document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        const key = el.getAttribute('data-i18n-title');
+        if (dict[key]) el.title = dict[key];
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (dict[key]) el.placeholder = dict[key];
+      });
+
+      renderAllLiquidDropdowns();
+      renderOfflinePresetCards();
+      updateActiveToolBadge();
+      renderSpriteExtractedPalette();
+    }
+
+    function t(key) {
+      return (I18N[state.lang] && I18N[state.lang][key]) || key;
+    }
+
+    function tToast(key) {
+      return (I18N[state.lang]?.toasts?.[key]) || key;
+    }
+
+    function switchInspectorTab(tab) {
+      state.activeTab = tab;
+      closeAllLiquidDropdowns();
+
+      ['ai', 'palette', 'io'].forEach(id => {
+        const btn = document.getElementById(`tabBtn_${id}`);
+        const panel = document.getElementById(`tabPanel_${id}`);
+        if (id === tab) {
+          btn.className = 'py-2 px-2 rounded-xl text-xs font-bold transition bg-gradient-to-r from-cyan-400/25 to-emerald-400/20 border border-cyan-300/40 text-cyan-200 shadow-sm';
+          panel.classList.remove('hidden');
+          panel.classList.add('flex');
+        } else {
+          btn.className = 'py-2 px-2 rounded-xl text-xs font-semibold transition text-slate-300 hover:text-white';
+          panel.classList.add('hidden');
+          panel.classList.remove('flex');
+        }
+      });
+    }
+
+    /**
+     * =========================================================================
+     * 8. 32-BIT PIXEL UTILITIES & UNDO/REDO HISTORY
+     * =========================================================================
+     */
+    function normalizeHex(hex) {
+      if (!hex || typeof hex !== 'string') return null;
+      let c = hex.trim().toLowerCase();
+      if (!c || c === 'null' || c === 'transparent' || c === 'none' || c === '.') return null;
+      if (!c.startsWith('#')) c = '#' + c;
+      if (/^#[0-9a-f]{3}$/.test(c)) {
+        c = '#' + c[1] + c[1] + c[2] + c[2] + c[3] + c[3];
+      }
+      if (/^#[0-9a-f]{6}$/.test(c)) return c;
+      if (/^#[0-9a-f]{8}$/.test(c)) {
+        return parseInt(c.slice(7, 9), 16) < 128 ? null : c.slice(0, 7);
+      }
+      return null;
+    }
+
+    function hexToUint32(hex) {
+      const norm = normalizeHex(hex);
+      if (!norm) return 0;
+      const r = parseInt(norm.slice(1, 3), 16);
+      const g = parseInt(norm.slice(3, 5), 16);
+      const b = parseInt(norm.slice(5, 7), 16);
+      return ((0xFF << 24) | (b << 16) | (g << 8) | r) >>> 0;
+    }
+
+    function rgbaToUint32(r, g, b, a = 255) {
+      if (a < 128) return 0;
+      return ((0xFF << 24) | ((b & 255) << 16) | ((g & 255) << 8) | (r & 255)) >>> 0;
+    }
+
+    function uint32ToHex(u32) {
+      if (!u32 || ((u32 >>> 24) & 255) === 0) return null;
+      const r = u32 & 255;
+      const g = (u32 >>> 8) & 255;
+      const b = (u32 >>> 16) & 255;
+      return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+    }
+
+    function rgbToHsl(r, g, b) {
+      r /= 255; g /= 255; b /= 255;
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      let h = 0, s = 0, l = (max + min) / 2;
+      if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+      }
+      return { h: h * 360, s: s * 100, l: l * 100 };
+    }
+
+    function hslToRgb(h, s, l) {
+      h /= 360; s /= 100; l /= 100;
+      let r, g, b;
+      if (s === 0) {
+        r = g = b = l;
+      } else {
+        const hue2rgb = (p, q, t) => {
+          if (t < 0) t += 1;
+          if (t > 1) t -= 1;
+          if (t < 1 / 6) return p + (q - p) * 6 * t;
+          if (t < 1 / 2) return q;
+          if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+          return p;
+        };
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1 / 3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1 / 3);
+      }
+      return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
+    }
+
+    function shiftUint32Lightness(u32, deltaL) {
+      if (!u32) return 0;
+      const r = u32 & 255;
+      const g = (u32 >>> 8) & 255;
+      const b = (u32 >>> 16) & 255;
+      const hsl = rgbToHsl(r, g, b);
+      hsl.l = Math.max(4, Math.min(96, hsl.l + deltaL));
+      const rgb = hslToRgb(hsl.h, hsl.s, hsl.l);
+      return rgbaToUint32(rgb.r, rgb.g, rgb.b, 255);
+    }
+
+    function pushHistory() {
+      const snap = {
+        frameIdx: state.currentFrameIndex,
+        data: new Uint32Array(getActiveBuffer())
+      };
+      if (state.historyIndex < state.history.length - 1) {
+        state.history = state.history.slice(0, state.historyIndex + 1);
+      }
+      state.history.push(snap);
+      if (state.history.length > state.maxHistory) state.history.shift();
+      else state.historyIndex++;
+      updateHistoryButtons();
+    }
+
+    function undo() {
+      if (state.historyIndex > 0) {
+        state.historyIndex--;
+        const entry = state.history[state.historyIndex];
+        state.currentFrameIndex = Math.min(state.frames.length - 1, entry.frameIdx);
+        setActiveBuffer(new Uint32Array(entry.data));
+        updateHistoryButtons();
+        syncBufferToSpriteAndRender();
+      }
+    }
+
+    function redo() {
+      if (state.historyIndex < state.history.length - 1) {
+        state.historyIndex++;
+        const entry = state.history[state.historyIndex];
+        state.currentFrameIndex = Math.min(state.frames.length - 1, entry.frameIdx);
+        setActiveBuffer(new Uint32Array(entry.data));
+        updateHistoryButtons();
+        syncBufferToSpriteAndRender();
+      }
+    }
+
+    function updateHistoryButtons() {
+      document.getElementById('btnUndo').disabled = state.historyIndex <= 0;
+      document.getElementById('btnRedo').disabled = state.historyIndex >= state.history.length - 1;
+    }
+
+    function isBufferEmpty(buf = getActiveBuffer()) {
+      for (let i = 0; i < buf.length; i++) {
+        if (buf[i] !== 0) return false;
+      }
+      return true;
+    }
+
+    /**
+     * =========================================================================
+     * 9. MULTI-RESOLUTION SWITCHER & MULTI-FRAME ANIMATION SYSTEM
+     * =========================================================================
+     */
+    function changeGridResolution(newSize) {
+      if (newSize === state.gridSize) return;
+      const oldSize = state.gridSize;
+
+      state.frames = state.frames.map(oldBuf => {
+        const nextBuf = new Uint32Array(newSize * newSize);
+        if (!isBufferEmpty(oldBuf)) {
+          for (let y = 0; y < newSize; y++) {
+            const srcY = Math.min(oldSize - 1, Math.floor((y / newSize) * oldSize));
+            for (let x = 0; x < newSize; x++) {
+              const srcX = Math.min(oldSize - 1, Math.floor((x / newSize) * oldSize));
+              nextBuf[y * newSize + x] = oldBuf[srcY * oldSize + srcX];
+            }
+          }
+        }
+        return nextBuf;
+      });
+
+      state.gridSize = newSize;
+      state.history = [];
+      state.historyIndex = -1;
+      pushHistory();
+
+      [16, 32, 64, 128, 256].forEach(sz => {
+        const btn = document.getElementById(`resBtn_${sz}`);
+        if (!btn) return;
+        btn.className = sz === newSize
+          ? 'res-pill px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold transition bg-gradient-to-r from-cyan-400 to-emerald-400 text-slate-950 shadow'
+          : 'res-pill px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold transition text-slate-300 hover:text-white';
+      });
+
+      document.getElementById('statusGridDim').textContent = `${newSize}×${newSize}`;
+      document.getElementById('pipelineModeBadge').textContent = newSize <= 32 ? `Matrix (${newSize}×)` : `Vector+Quantize (${newSize}×)`;
+
+      fitCanvasToScreen();
+      syncBufferToSpriteAndRender();
+    }
+
+    function renderFramesStrip() {
+      const strip = document.getElementById('framesStrip');
+      if (!strip) return;
+      const size = state.gridSize;
+      strip.innerHTML = '';
+
+      state.frames.forEach((buf, idx) => {
+        const isCurrent = idx === state.currentFrameIndex;
+        const wrap = document.createElement('button');
+        wrap.type = 'button';
+        wrap.className = `relative flex-shrink-0 w-10 h-10 checkerboard rounded-xl overflow-hidden transition ${isCurrent ? 'ring-2 ring-cyan-300 scale-105 shadow-md' : 'border border-white/15 opacity-75 hover:opacity-100'}`;
+
+        const c = document.createElement('canvas');
+        c.width = size;
+        c.height = size;
+        c.className = 'w-full h-full pixelated';
+        const ctx = c.getContext('2d');
+        const imgData = ctx.createImageData(size, size);
+        new Uint32Array(imgData.data.buffer).set(buf);
+        ctx.putImageData(imgData, 0, 0);
+
+        const numTag = document.createElement('span');
+        numTag.dir = 'ltr';
+        numTag.className = 'absolute bottom-0.5 right-1 text-[9px] font-mono font-bold text-white bg-black/70 px-1 rounded';
+        numTag.textContent = String(idx + 1);
+
+        wrap.appendChild(c);
+        wrap.appendChild(numTag);
+        wrap.onclick = () => {
+          state.currentFrameIndex = idx;
+          syncBufferToSpriteAndRender();
+        };
+        strip.appendChild(wrap);
+      });
+    }
+
+    function addNewFrame() {
+      state.frames.push(new Uint32Array(state.gridSize * state.gridSize));
+      state.currentFrameIndex = state.frames.length - 1;
+      pushHistory();
+      syncBufferToSpriteAndRender();
+    }
+
+    function duplicateCurrentFrame() {
+      const copy = new Uint32Array(getActiveBuffer());
+      state.frames.splice(state.currentFrameIndex + 1, 0, copy);
+      state.currentFrameIndex++;
+      pushHistory();
+      syncBufferToSpriteAndRender();
+    }
+
+    function deleteCurrentFrame() {
+      if (state.frames.length <= 1) {
+        showToast(tToast('minOneFrame'), 'info');
+        return;
+      }
+      state.frames.splice(state.currentFrameIndex, 1);
+      state.currentFrameIndex = Math.max(0, state.currentFrameIndex - 1);
+      pushHistory();
+      syncBufferToSpriteAndRender();
+    }
+
+    function toggleOnionSkin() {
+      state.onionSkin = !state.onionSkin;
+      const btn = document.getElementById('btnOnionSkin');
+      btn.className = state.onionSkin
+        ? 'px-2 py-1 rounded-lg bg-cyan-400/25 border border-cyan-300/50 text-[10px] font-bold text-cyan-200 transition'
+        : 'px-2 py-1 rounded-lg liquid-glass-sub text-[10px] font-semibold text-slate-300 hover:border-cyan-400/40 transition';
+      renderViewport();
+    }
+
+    function togglePlayAnimation() {
+      state.isPlayingAnim = !state.isPlayingAnim;
+      const btn = document.getElementById('btnPlayAnim');
+      btn.textContent = state.isPlayingAnim ? '⏸' : '▶';
+
+      if (state.animTimerId) {
+        clearInterval(state.animTimerId);
+        state.animTimerId = null;
+      }
+
+      if (state.isPlayingAnim) {
+        state.animPreviewFrame = 0;
+        state.animTimerId = setInterval(() => {
+          state.animPreviewFrame = (state.animPreviewFrame + 1) % state.frames.length;
+          renderLivePreviews(state.frames[state.animPreviewFrame]);
+        }, 1000 / state.animFps);
+      } else {
+        renderLivePreviews(getActiveBuffer());
+      }
+    }
+
+    function cycleAnimFps() {
+      const steps = [4, 6, 8, 12];
+      const nextIdx = (steps.indexOf(state.animFps) + 1) % steps.length;
+      state.animFps = steps[nextIdx];
+      document.getElementById('animFpsLabel').textContent = `${state.animFps} FPS`;
+      if (state.isPlayingAnim) {
+        togglePlayAnimation();
+        togglePlayAnimation();
+      }
+    }
+
+    /**
+     * =========================================================================
+     * 10. VIEWPORT RENDERER, ZOOM, PAN & LIVE PREVIEW HUD
+     * =========================================================================
+     */
+    function resizeViewportCanvas(fitAfter = false) {
+      const container = document.getElementById('stageContainer');
+      const rect = container.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      viewportCanvas.width = Math.max(1, Math.round(rect.width * dpr));
+      viewportCanvas.height = Math.max(1, Math.round(rect.height * dpr));
+      if (fitAfter) fitCanvasToScreen();
+      else renderViewport();
+    }
+
+    function fitCanvasToScreen() {
+      const w = viewportCanvas.width;
+      const h = viewportCanvas.height;
+      const minDim = Math.min(w, h);
+      const targetSpan = minDim * 0.72;
+      state.camera.zoom = Math.max(1, targetSpan / state.gridSize);
+      const boardPx = state.gridSize * state.camera.zoom;
+      state.camera.panX = Math.floor((w - boardPx) / 2);
+      state.camera.panY = Math.floor((h - boardPx) / 2);
+      updateZoomDisplay();
+      renderViewport();
+    }
+
+    function zoomByFactor(factor, cx = null, cy = null) {
+      const w = viewportCanvas.width;
+      const h = viewportCanvas.height;
+      const anchorX = cx !== null ? cx : w / 2;
+      const anchorY = cy !== null ? cy : h / 2;
+
+      const oldZoom = state.camera.zoom;
+      const minZoom = Math.max(0.5, (Math.min(w, h) * 0.22) / state.gridSize);
+      const maxZoom = Math.max(54, (Math.min(w, h) * 0.95) / 4);
+      const newZoom = Math.max(minZoom, Math.min(maxZoom, oldZoom * factor));
+
+      const gridX = (anchorX - state.camera.panX) / oldZoom;
+      const gridY = (anchorY - state.camera.panY) / oldZoom;
+      state.camera.zoom = newZoom;
+      state.camera.panX = anchorX - gridX * newZoom;
+      state.camera.panY = anchorY - gridY * newZoom;
+
+      updateZoomDisplay();
+      renderViewport();
+    }
+
+    function updateZoomDisplay() {
+      const w = viewportCanvas.width;
+      const h = viewportCanvas.height;
+      const fitZoom = (Math.min(w, h) * 0.72) / state.gridSize;
+      const pct = Math.round((state.camera.zoom / Math.max(0.1, fitZoom)) * 100);
+      const el = document.getElementById('btnZoomPct');
+      if (el) el.textContent = `${pct}%`;
+    }
+
+    function syncBufferToSpriteAndRender() {
+      const size = state.gridSize;
+      offscreenCanvas.width = size;
+      offscreenCanvas.height = size;
+      const imgData = oCtx.createImageData(size, size);
+      new Uint32Array(imgData.data.buffer).set(getActiveBuffer());
+      oCtx.putImageData(imgData, 0, 0);
+
+      renderViewport();
+      if (!state.isPlayingAnim) renderLivePreviews(getActiveBuffer());
+      renderFramesStrip();
+      renderSpriteExtractedPalette();
+    }
+
+    function renderViewport(previewCells = null) {
+      const w = viewportCanvas.width;
+      const h = viewportCanvas.height;
+      const size = state.gridSize;
+      const zoom = state.camera.zoom;
+      const panX = state.camera.panX;
+      const panY = state.camera.panY;
+      const boardSize = size * zoom;
+
+      vCtx.clearRect(0, 0, w, h);
+      vCtx.imageSmoothingEnabled = false;
+
+      vCtx.save();
+      vCtx.beginPath();
+      vCtx.rect(panX, panY, boardSize, boardSize);
+      vCtx.clip();
+
+      // Adaptive Checkerboard
+      const step = zoom >= 8 ? 1 : (zoom >= 4 ? 2 : (zoom >= 2 ? 4 : 8));
+      const checkerPx = step * zoom;
+      const count = Math.ceil(size / step);
+      vCtx.fillStyle = '#0a101d';
+      vCtx.fillRect(panX, panY, boardSize, boardSize);
+      vCtx.fillStyle = '#131d32';
+      for (let cy = 0; cy < count; cy++) {
+        for (let cx = (cy % 2); cx < count; cx += 2) {
+          vCtx.fillRect(panX + cx * checkerPx, panY + cy * checkerPx, checkerPx, checkerPx);
+        }
+      }
+
+      // Onion Skin Overlay (Previous Frame at 28% Opacity)
+      if (state.onionSkin && state.currentFrameIndex > 0) {
+        const prevBuf = state.frames[state.currentFrameIndex - 1];
+        onionCanvas.width = size;
+        onionCanvas.height = size;
+        const oImg = onionCtx.createImageData(size, size);
+        new Uint32Array(oImg.data.buffer).set(prevBuf);
+        onionCtx.putImageData(oImg, 0, 0);
+        vCtx.globalAlpha = 0.28;
+        vCtx.drawImage(onionCanvas, panX, panY, boardSize, boardSize);
+        vCtx.globalAlpha = 1.0;
+      }
+
+      // Draw Active Frame Buffer
+      vCtx.drawImage(offscreenCanvas, panX, panY, boardSize, boardSize);
+
+      // Shape Drag Preview
+      if (previewCells && previewCells.length > 0) {
+        vCtx.fillStyle = state.primaryColor;
+        vCtx.globalAlpha = 0.85;
+        previewCells.forEach(pt => {
+          if (pt.x >= 0 && pt.x < size && pt.y >= 0 && pt.y < size) {
+            vCtx.fillRect(panX + pt.x * zoom, panY + pt.y * zoom, zoom, zoom);
+          }
+        });
+        vCtx.globalAlpha = 1.0;
+      }
+
+      // Adaptive Pixel Grid Overlay (#)
+      if (state.showGrid && zoom >= 4.5) {
+        const alpha = Math.min(0.18, Math.max(0.04, (zoom - 4.5) / 60));
+        vCtx.strokeStyle = `rgba(148, 163, 184, ${alpha.toFixed(3)})`;
+        vCtx.lineWidth = 1;
+        vCtx.beginPath();
+        for (let i = 1; i < size; i++) {
+          const xPos = Math.round(panX + i * zoom) + 0.5;
+          const yPos = Math.round(panY + i * zoom) + 0.5;
+          vCtx.moveTo(xPos, panY);
+          vCtx.lineTo(xPos, panY + boardSize);
+          vCtx.moveTo(panX, yPos);
+          vCtx.lineTo(panX + boardSize, yPos);
+        }
+        vCtx.stroke();
+      }
+
+      // Symmetry Guide Lines
+      if (state.symmetry !== 'OFF') {
+        vCtx.strokeStyle = 'rgba(56, 189, 248, 0.85)';
+        vCtx.lineWidth = 2;
+        vCtx.setLineDash([6, 4]);
+        vCtx.beginPath();
+        if (state.symmetry === 'X' || state.symmetry === 'XY') {
+          const mx = panX + boardSize / 2;
+          vCtx.moveTo(mx, panY);
+          vCtx.lineTo(mx, panY + boardSize);
+        }
+        if (state.symmetry === 'Y' || state.symmetry === 'XY') {
+          const my = panY + boardSize / 2;
+          vCtx.moveTo(panX, my);
+          vCtx.lineTo(panX + boardSize, my);
+        }
+        vCtx.stroke();
+        vCtx.setLineDash([]);
+      }
+
+      // Brush Footprint Hover Outline
+      if (state.pointer.hoverCell && state.activeTool !== 'pan') {
+        const { x, y } = state.pointer.hoverCell;
+        const bSize = ['pencil', 'eraser', 'dither'].includes(state.activeTool) ? state.brushSize : 1;
+        const off = Math.floor((bSize - 1) / 2);
+        vCtx.strokeStyle = 'rgba(255, 255, 255, 0.88)';
+        vCtx.lineWidth = 1.5;
+        vCtx.strokeRect(
+          panX + (x - off) * zoom + 0.5,
+          panY + (y - off) * zoom + 0.5,
+          bSize * zoom - 1,
+          bSize * zoom - 1
+        );
+      }
+
+      vCtx.restore();
+
+      // Liquid Glass Canvas Rim
+      vCtx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+      vCtx.lineWidth = 1.5;
+      vCtx.strokeRect(panX - 0.5, panY - 0.5, boardSize + 1, boardSize + 1);
+    }
+
+    function renderLivePreviews(buf = getActiveBuffer()) {
+      const size = state.gridSize;
+      const tmp = document.createElement('canvas');
+      tmp.width = size;
+      tmp.height = size;
+      const tCtx = tmp.getContext('2d');
+      const imgData = tCtx.createImageData(size, size);
+      new Uint32Array(imgData.data.buffer).set(buf);
+      tCtx.putImageData(imgData, 0, 0);
+
+      // 1x
+      preview1x.width = size;
+      preview1x.height = size;
+      p1Ctx.imageSmoothingEnabled = false;
+      p1Ctx.clearRect(0, 0, size, size);
+      p1Ctx.drawImage(tmp, 0, 0);
+
+      // 2x
+      preview2x.width = size * 2;
+      preview2x.height = size * 2;
+      p2Ctx.imageSmoothingEnabled = false;
+      p2Ctx.clearRect(0, 0, size * 2, size * 2);
+      p2Ctx.drawImage(tmp, 0, 0, size * 2, size * 2);
+
+      // 3x3 Seamless Tile
+      const tDim = size * 3;
+      previewTile3x3.width = tDim;
+      previewTile3x3.height = tDim;
+      pTileCtx.imageSmoothingEnabled = false;
+      pTileCtx.clearRect(0, 0, tDim, tDim);
+      for (let ty = 0; ty < 3; ty++) {
+        for (let tx = 0; tx < 3; tx++) {
+          pTileCtx.drawImage(tmp, tx * size, ty * size, size, size);
+        }
+      }
+    }
+
+    function toggleTilePreviewMode() {
+      state.tilePreview = !state.tilePreview;
+      const btn = document.getElementById('btnTilePreviewToggle');
+      const stdBox = document.getElementById('standardPreviewBox');
+      const tileBox = document.getElementById('tilePreviewBox');
+
+      if (state.tilePreview) {
+        btn.className = 'px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold border transition bg-emerald-400/25 border-emerald-300/50 text-emerald-200';
+        stdBox.classList.add('hidden');
+        tileBox.classList.remove('hidden');
+        tileBox.classList.add('flex');
+      } else {
+        btn.className = 'px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold border transition liquid-glass-sub text-slate-300 hover:border-cyan-400/50';
+        stdBox.classList.remove('hidden');
+        tileBox.classList.add('hidden');
+        tileBox.classList.remove('flex');
+      }
+    }
+
+    /**
+     * =========================================================================
+     * 11. PIXEL DRAWING ENGINE & SHAPE RASTERIZERS
+     * =========================================================================
+     */
+    function screenToGridCell(clientX, clientY) {
+      const rect = viewportCanvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const canvasX = (clientX - rect.left) * dpr;
+      const canvasY = (clientY - rect.top) * dpr;
+      const gx = Math.floor((canvasX - state.camera.panX) / state.camera.zoom);
+      const gy = Math.floor((canvasY - state.camera.panY) / state.camera.zoom);
+      return { x: gx, y: gy, canvasX, canvasY };
+    }
+
+    function isInsideGrid(x, y) {
+      return x >= 0 && x < state.gridSize && y >= 0 && y < state.gridSize;
+    }
+
+    function getSymmetricPoints(x, y) {
+      const size = state.gridSize;
+      const pts = [{ x, y }];
+      if (state.symmetry === 'X' || state.symmetry === 'XY') pts.push({ x: size - 1 - x, y });
+      if (state.symmetry === 'Y' || state.symmetry === 'XY') pts.push({ x, y: size - 1 - y });
+      if (state.symmetry === 'XY') pts.push({ x: size - 1 - x, y: size - 1 - y });
+      return pts;
+    }
+
+    function plotBrushAt(cx, cy, tool, isAltBtn = false) {
+      const buf = getActiveBuffer();
+      const bSize = ['pencil', 'eraser', 'dither'].includes(tool) ? state.brushSize : 1;
+      const off = Math.floor((bSize - 1) / 2);
+      const primaryU32 = hexToUint32(state.primaryColor);
+      const secondaryU32 = hexToUint32(state.secondaryColor);
+      let changed = false;
+
+      for (let dy = 0; dy < bSize; dy++) {
+        for (let dx = 0; dx < bSize; dx++) {
+          const px = cx - off + dx;
+          const py = cy - off + dy;
+          if (!isInsideGrid(px, py)) continue;
+
+          for (const sp of getSymmetricPoints(px, py)) {
+            if (!isInsideGrid(sp.x, sp.y)) continue;
+            const idx = sp.y * state.gridSize + sp.x;
+
+            if (tool === 'pencil') {
+              const paintCol = isAltBtn ? secondaryU32 : primaryU32;
+              if (buf[idx] !== paintCol) {
+                buf[idx] = paintCol;
+                changed = true;
+              }
+            } else if (tool === 'eraser') {
+              if (buf[idx] !== 0) {
+                buf[idx] = 0;
+                changed = true;
+              }
+            } else if (tool === 'dither') {
+              const col = ((sp.x + sp.y) % 2 === 0) ? primaryU32 : secondaryU32;
+              if (buf[idx] !== col) {
+                buf[idx] = col;
+                changed = true;
+              }
+            } else if (tool === 'shade') {
+              if (buf[idx] !== 0 && !state.pointer.shadeVisited.has(idx)) {
+                state.pointer.shadeVisited.add(idx);
+                buf[idx] = shiftUint32Lightness(buf[idx], isAltBtn ? -10 : 10);
+                changed = true;
+              }
+            }
+          }
+        }
+      }
+      return changed;
+    }
+
+    function getBresenhamLinePoints(x0, y0, x1, y1) {
+      const pts = [];
+      let dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
+      let sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+      let err = dx - dy;
+      while (true) {
+        pts.push({ x: x0, y: y0 });
+        if (x0 === x1 && y0 === y1) break;
+        const e2 = 2 * err;
+        if (e2 > -dy) { err -= dy; x0 += sx; }
+        if (e2 < dx) { err += dx; y0 += sy; }
+      }
+      return pts;
+    }
+
+    function getRectanglePoints(x0, y0, x1, y1) {
+      const minX = Math.min(x0, x1), maxX = Math.max(x0, x1);
+      const minY = Math.min(y0, y1), maxY = Math.max(y0, y1);
+      const pts = [];
+      for (let y = minY; y <= maxY; y++) {
+        for (let x = minX; x <= maxX; x++) {
+          if (x === minX || x === maxX || y === minY || y === maxY) pts.push({ x, y });
+        }
+      }
+      return pts;
+    }
+
+    function getEllipsePoints(x0, y0, x1, y1) {
+      const minX = Math.min(x0, x1), maxX = Math.max(x0, x1);
+      const minY = Math.min(y0, y1), maxY = Math.max(y0, y1);
+      const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+      const rx = Math.max(0.5, (maxX - minX) / 2), ry = Math.max(0.5, (maxY - minY) / 2);
+      const innerRx = Math.max(0, rx - 1.15), innerRy = Math.max(0, ry - 1.15);
+      const pts = [];
+      for (let y = minY; y <= maxY; y++) {
+        for (let x = minX; x <= maxX; x++) {
+          const d = ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2;
+          const id = (innerRx > 0 && innerRy > 0) ? (((x - cx) / innerRx) ** 2 + ((y - cy) / innerRy) ** 2) : 2;
+          if (d <= 1.05 && id >= 0.85) pts.push({ x, y });
+        }
+      }
+      return pts;
+    }
+
+    function computeShapePreview(start, end) {
+      if (!start || !end) return [];
+      let raw = [];
+      if (state.activeTool === 'line') raw = getBresenhamLinePoints(start.x, start.y, end.x, end.y);
+      else if (state.activeTool === 'rect') raw = getRectanglePoints(start.x, start.y, end.x, end.y);
+      else if (state.activeTool === 'circle') raw = getEllipsePoints(start.x, start.y, end.x, end.y);
+      const out = [];
+      raw.forEach(p => getSymmetricPoints(p.x, p.y).forEach(sp => out.push(sp)));
+      return out;
+    }
+
+    function floodFillBuffer(sx, sy, replacementU32) {
+      if (!isInsideGrid(sx, sy)) return false;
+      const buf = getActiveBuffer();
+      const size = state.gridSize;
+      const targetU32 = buf[sy * size + sx];
+      if (targetU32 === replacementU32) return false;
+      const stack = [[sx, sy]];
+      const visited = new Uint8Array(size * size);
+      while (stack.length > 0) {
+        const [x, y] = stack.pop();
+        if (x < 0 || x >= size || y < 0 || y >= size) continue;
+        const idx = y * size + x;
+        if (visited[idx] || buf[idx] !== targetU32) continue;
+        visited[idx] = 1;
+        buf[idx] = replacementU32;
+        stack.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]);
+      }
+      return true;
+    }
+
+    let strokeModified = false;
+
+    function setupViewportEvents() {
+      viewportCanvas.addEventListener('contextmenu', e => e.preventDefault());
+
+      viewportCanvas.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        viewportCanvas.setPointerCapture(e.pointerId);
+        const info = screenToGridCell(e.clientX, e.clientY);
+
+        if (e.button === 1 || state.pointer.spaceHeld || state.activeTool === 'pan') {
+          state.pointer.isPanning = true;
+          state.pointer.panStartX = info.canvasX;
+          state.pointer.panStartY = info.canvasY;
+          state.pointer.camStartPanX = state.camera.panX;
+          state.pointer.camStartPanY = state.camera.panY;
+          viewportCanvas.classList.add('panning-cursor');
+          return;
+        }
+
+        state.pointer.isDown = true;
+        state.pointer.button = e.button;
+        state.pointer.startCell = { x: info.x, y: info.y };
+        state.pointer.lastCell = { x: info.x, y: info.y };
+        state.pointer.shadeVisited.clear();
+        strokeModified = false;
+
+        const isAlt = e.button === 2 || e.altKey;
+
+        if (state.activeTool === 'picker') {
+          if (isInsideGrid(info.x, info.y)) {
+            const hex = uint32ToHex(getActiveBuffer()[info.y * state.gridSize + info.x]);
+            if (hex) {
+              if (isAlt) setSecondaryColor(hex);
+              else setPrimaryColor(hex);
+              selectTool(state.previousTool || 'pencil');
+            }
+          }
+          return;
+        }
+
+        if (state.activeTool === 'bucket') {
+          const fillU32 = hexToUint32(isAlt ? state.secondaryColor : state.primaryColor);
+          getSymmetricPoints(info.x, info.y).forEach(sp => {
+            if (floodFillBuffer(sp.x, sp.y, fillU32)) strokeModified = true;
+          });
+          if (strokeModified) {
+            pushHistory();
+            syncBufferToSpriteAndRender();
+          }
+          return;
+        }
+
+        if (['pencil', 'eraser', 'dither', 'shade'].includes(state.activeTool)) {
+          if (plotBrushAt(info.x, info.y, state.activeTool, isAlt)) {
+            strokeModified = true;
+            syncBufferToSpriteAndRender();
+          }
+        } else if (['line', 'rect', 'circle'].includes(state.activeTool)) {
+          renderViewport(computeShapePreview(state.pointer.startCell, state.pointer.lastCell));
+        }
+      });
+
+      viewportCanvas.addEventListener('pointermove', (e) => {
+        const info = screenToGridCell(e.clientX, e.clientY);
+
+        if (isInsideGrid(info.x, info.y)) {
+          state.pointer.hoverCell = { x: info.x, y: info.y };
+          document.getElementById('statusCoords').textContent = `X: ${info.x + 1}, Y: ${info.y + 1}`;
+        } else {
+          state.pointer.hoverCell = null;
+          document.getElementById('statusCoords').textContent = 'X: -, Y: -';
+        }
+
+        if (state.pointer.isPanning) {
+          state.camera.panX = state.pointer.camStartPanX + (info.canvasX - state.pointer.panStartX);
+          state.camera.panY = state.pointer.camStartPanY + (info.canvasY - state.pointer.panStartY);
+          renderViewport();
+          return;
+        }
+
+        if (!state.pointer.isDown) {
+          renderViewport();
+          return;
+        }
+
+        const isAlt = state.pointer.button === 2 || e.altKey;
+
+        if (['pencil', 'eraser', 'dither', 'shade'].includes(state.activeTool)) {
+          const pts = getBresenhamLinePoints(state.pointer.lastCell.x, state.pointer.lastCell.y, info.x, info.y);
+          let changed = false;
+          for (const pt of pts) {
+            if (plotBrushAt(pt.x, pt.y, state.activeTool, isAlt)) {
+              changed = true;
+              strokeModified = true;
+            }
+          }
+          state.pointer.lastCell = { x: info.x, y: info.y };
+          if (changed) syncBufferToSpriteAndRender();
+        } else if (['line', 'rect', 'circle'].includes(state.activeTool)) {
+          state.pointer.lastCell = { x: info.x, y: info.y };
+          renderViewport(computeShapePreview(state.pointer.startCell, state.pointer.lastCell));
+        }
+      });
+
+      const onPointerEnd = () => {
+        if (state.pointer.isPanning) {
+          state.pointer.isPanning = false;
+          viewportCanvas.classList.remove('panning-cursor');
+          return;
+        }
+        if (!state.pointer.isDown) return;
+
+        if (['line', 'rect', 'circle'].includes(state.activeTool) && state.pointer.startCell && state.pointer.lastCell) {
+          const buf = getActiveBuffer();
+          const pts = computeShapePreview(state.pointer.startCell, state.pointer.lastCell);
+          const colU32 = hexToUint32(state.primaryColor);
+          pts.forEach(pt => {
+            if (isInsideGrid(pt.x, pt.y)) {
+              buf[pt.y * state.gridSize + pt.x] = colU32;
+              strokeModified = true;
+            }
+          });
+        }
+
+        state.pointer.isDown = false;
+        state.pointer.startCell = null;
+        state.pointer.lastCell = null;
+
+        if (strokeModified) {
+          pushHistory();
+          syncBufferToSpriteAndRender();
+        } else {
+          renderViewport();
+        }
+      };
+
+      viewportCanvas.addEventListener('pointerup', onPointerEnd);
+      viewportCanvas.addEventListener('pointercancel', onPointerEnd);
+      viewportCanvas.addEventListener('pointerleave', () => {
+        state.pointer.hoverCell = null;
+        document.getElementById('statusCoords').textContent = 'X: -, Y: -';
+        if (!state.pointer.isDown) renderViewport();
+      });
+
+      viewportCanvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const rect = viewportCanvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        zoomByFactor(e.deltaY < 0 ? 1.15 : 0.87, (e.clientX - rect.left) * dpr, (e.clientY - rect.top) * dpr);
+      }, { passive: false });
+    }
+
+    /**
+     * =========================================================================
+     * 12. TOOL SELECTION, TRANSFORMS & GAME PALETTE SWATCHES
+     * =========================================================================
+     */
+    function selectTool(tool) {
+      if (tool !== 'picker' && tool !== 'pan') state.previousTool = tool;
+      state.activeTool = tool;
+
+      document.querySelectorAll('.tool-item').forEach(btn => {
+        btn.className = 'tool-item flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-xl border text-[11px] font-medium transition liquid-glass-sub text-slate-300 hover:border-cyan-400/40';
+      });
+      const active = document.getElementById(`toolBtn_${tool}`);
+      if (active) {
+        active.className = 'tool-item flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-xl border text-[11px] font-semibold transition bg-cyan-400/20 border-cyan-300/60 text-cyan-200 shadow-inner';
+      }
+
+      viewportCanvas.classList.toggle('pan-cursor', tool === 'pan');
+      updateActiveToolBadge();
+    }
+
+    function updateActiveToolBadge() {
+      const map = {
+        pencil: 'toolPencil',
+        eraser: 'toolEraser',
+        bucket: 'toolBucket',
+        picker: 'toolPicker',
+        line: 'toolLine',
+        rect: 'toolRect',
+        circle: 'toolCircle',
+        shade: 'toolShade',
+        dither: 'toolDither',
+        pan: 'toolPan'
+      };
+      document.getElementById('activeToolBadge').textContent = t(map[state.activeTool] || 'toolPencil');
+    }
+
+    function setBrushSize(sz) {
+      state.brushSize = sz;
+      [1, 2, 3, 4].forEach(b => {
+        const btn = document.getElementById(`brushBtn_${b}`);
+        if (!btn) return;
+        btn.className = b === sz
+          ? 'py-1 rounded-lg text-[11px] font-mono font-bold bg-gradient-to-r from-cyan-400 to-teal-400 text-slate-950 shadow'
+          : 'py-1 rounded-lg text-[11px] font-mono font-bold text-slate-300 hover:text-white';
+      });
+    }
+
+    function toggleGridLines() {
+      state.showGrid = !state.showGrid;
+      const btn = document.getElementById('btnGridToggle');
+      btn.className = state.showGrid
+        ? 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-mono font-bold border transition bg-cyan-400/20 border-cyan-300/45 text-cyan-200 shadow-sm'
+        : 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-mono font-bold border transition liquid-glass-sub text-slate-400';
+      renderViewport();
+    }
+
+    function cycleSymmetryMode() {
+      const modes = ['OFF', 'X', 'Y', 'XY'];
+      state.symmetry = modes[(modes.indexOf(state.symmetry) + 1) % modes.length];
+      document.getElementById('symmetryLabel').textContent = state.symmetry;
+      const btn = document.getElementById('btnSymmetry');
+      btn.className = state.symmetry !== 'OFF'
+        ? 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-mono font-bold border transition bg-emerald-400/20 border-emerald-300/45 text-emerald-200'
+        : 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-mono font-bold border transition liquid-glass-sub text-slate-200 hover:border-cyan-400/40';
+      renderViewport();
+    }
+
+    function flipCanvasHorizontal() {
+      const size = state.gridSize;
+      const buf = getActiveBuffer();
+      const next = new Uint32Array(size * size);
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          next[y * size + x] = buf[y * size + (size - 1 - x)];
+        }
+      }
+      setActiveBuffer(next);
+      pushHistory();
+      syncBufferToSpriteAndRender();
+    }
+
+    function flipCanvasVertical() {
+      const size = state.gridSize;
+      const buf = getActiveBuffer();
+      const next = new Uint32Array(size * size);
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          next[y * size + x] = buf[(size - 1 - y) * size + x];
+        }
+      }
+      setActiveBuffer(next);
+      pushHistory();
+      syncBufferToSpriteAndRender();
+    }
+
+    function rotateCanvas90() {
+      const size = state.gridSize;
+      const buf = getActiveBuffer();
+      const next = new Uint32Array(size * size);
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          next[x * size + (size - 1 - y)] = buf[y * size + x];
+        }
+      }
+      setActiveBuffer(next);
+      pushHistory();
+      syncBufferToSpriteAndRender();
+    }
+
+    function nudgeCanvas(dx, dy) {
+      const size = state.gridSize;
+      const buf = getActiveBuffer();
+      const next = new Uint32Array(size * size);
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          const nx = (x + dx + size) % size;
+          const ny = (y + dy + size) % size;
+          next[ny * size + nx] = buf[y * size + x];
+        }
+      }
+      setActiveBuffer(next);
+      pushHistory();
+      syncBufferToSpriteAndRender();
+    }
+
+    function applyAutoOutline() {
+      if (isBufferEmpty()) {
+        showToast(tToast('emptyCanvas'), 'info');
+        return;
+      }
+      const size = state.gridSize;
+      const buf = getActiveBuffer();
+      const next = new Uint32Array(buf);
+      const outlineU32 = hexToUint32('#060a14');
+      const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
+
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          const idx = y * size + x;
+          if (buf[idx] !== 0) continue;
+          for (const [dx, dy] of dirs) {
+            const nx = x + dx, ny = y + dy;
+            if (isInsideGrid(nx, ny) && buf[ny * size + nx] !== 0) {
+              next[idx] = outlineU32;
+              break;
+            }
+          }
+        }
+      }
+      setActiveBuffer(next);
+      pushHistory();
+      syncBufferToSpriteAndRender();
+      showToast(tToast('outlineApplied'), 'success');
+    }
+
+    function adjustGlobalSprite(type, delta) {
+      if (isBufferEmpty()) {
+        showToast(tToast('emptyCanvas'), 'info');
+        return;
+      }
+      const buf = getActiveBuffer();
+      for (let i = 0; i < buf.length; i++) {
+        const u32 = buf[i];
+        if (u32 === 0) continue;
+        const r = u32 & 255;
+        const g = (u32 >>> 8) & 255;
+        const b = (u32 >>> 16) & 255;
+        const hsl = rgbToHsl(r, g, b);
+
+        if (type === 'brightness') hsl.l = Math.max(4, Math.min(96, hsl.l + delta));
+        else if (type === 'saturation') hsl.s = Math.max(0, Math.min(100, hsl.s + delta));
+        else if (type === 'contrast') {
+          hsl.l = hsl.l >= 50
+            ? Math.max(4, Math.min(96, hsl.l + delta))
+            : Math.max(4, Math.min(96, hsl.l - delta));
+        }
+
+        const rgb = hslToRgb(hsl.h, hsl.s, hsl.l);
+        buf[i] = rgbaToUint32(rgb.r, rgb.g, rgb.b, 255);
+      }
+      pushHistory();
+      syncBufferToSpriteAndRender();
+    }
+
+    function replaceSecondaryWithPrimary() {
+      const fromU32 = hexToUint32(state.secondaryColor);
+      const toU32 = hexToUint32(state.primaryColor);
+      const buf = getActiveBuffer();
+      let count = 0;
+      for (let i = 0; i < buf.length; i++) {
+        if (buf[i] === fromU32) {
+          buf[i] = toU32;
+          count++;
+        }
+      }
+      if (count > 0) {
+        pushHistory();
+        syncBufferToSpriteAndRender();
+        showToast(tToast('colorReplaced'), 'success');
+      } else {
+        showToast(tToast('emptyCanvas'), 'info');
+      }
+    }
+
+    function renderSpriteExtractedPalette() {
+      const box = document.getElementById('spriteExtractedPalette');
+      const badge = document.getElementById('spritePaletteBadge');
+      const buf = getActiveBuffer();
+      const unique = new Set();
+      for (let i = 0; i < buf.length; i++) {
+        if (buf[i] !== 0) unique.add(buf[i]);
+      }
+
+      badge.textContent = String(unique.size);
+      document.getElementById('statusColorsCount').textContent = `${unique.size} colors`;
+      box.innerHTML = '';
+
+      if (unique.size === 0) {
+        box.innerHTML = `<span class="text-[10px] text-slate-400">${state.lang === 'fa' ? 'بدون رنگ' : 'Empty'}</span>`;
+        return;
+      }
+
+      Array.from(unique).slice(0, 48).forEach(u32 => {
+        const hex = uint32ToHex(u32);
+        const btn = document.createElement('button');
+        const isPrimary = hex === state.primaryColor.toLowerCase();
+        btn.style.backgroundColor = hex;
+        btn.title = hex.toUpperCase();
+        btn.className = `w-5 h-5 rounded-md transition hover:scale-110 cursor-pointer ${isPrimary ? 'ring-2 ring-white scale-110' : 'border border-white/25'}`;
+        btn.onclick = () => setPrimaryColor(hex);
+        btn.oncontextmenu = (e) => { e.preventDefault(); setSecondaryColor(hex); };
+        box.appendChild(btn);
+      });
+    }
+
+    function renderGamePaletteSwatches() {
+      const box = document.getElementById('gamePaletteSwatches');
+      if (!box) return;
+      const colors = GAME_PALETTES[state.selectedGamePalette] || GAME_PALETTES.pico8;
+      box.innerHTML = '';
+
+      colors.forEach(hex => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.style.backgroundColor = hex;
+        btn.title = hex.toUpperCase();
+        btn.className = 'w-5 h-5 rounded-md border border-white/25 hover:scale-115 transition cursor-pointer';
+        btn.onclick = () => {
+          setPrimaryColor(hex);
+          if (state.activeTool === 'eraser') selectTool('pencil');
+        };
+        btn.oncontextmenu = (e) => { e.preventDefault(); setSecondaryColor(hex); };
+        box.appendChild(btn);
+      });
+    }
+
+    function requestClearCanvas() {
+      if (isBufferEmpty()) {
+        showToast(tToast('emptyCanvas'), 'info');
+        return;
+      }
+      openModal('confirmModal');
+    }
+
+    function confirmClearCanvas() {
+      closeModal('confirmModal');
+      setActiveBuffer(new Uint32Array(state.gridSize * state.gridSize));
+      pushHistory();
+      syncBufferToSpriteAndRender();
+      showToast(tToast('canvasCleared'), 'info');
+    }
+
+    /**
+     * =========================================================================
+     * 13. OFFLINE QUICK PRESETS (DIAMOND SWORD, DRAGON HELMET, SHIELD, POTION)
+     * =========================================================================
+     */
+    const OFFLINE_PRESETS = {
+      sword: {
+        promptFa: 'شمشیر الماسی آبی با دسته طلایی و تیغه درخشان',
+        promptEn: 'Blue diamond sword with golden hilt and glowing blade',
+        draw(ctx, s) {
+          const p = (x, y, w, h, c) => {
+            ctx.fillStyle = c;
+            ctx.fillRect(Math.round(x * s), Math.round(y * s), Math.max(1, Math.round(w * s)), Math.max(1, Math.round(h * s)));
+          };
+          for (let i = 0; i < 9; i++) {
+            const bx = 11 - i, by = 2 + i;
+            p(bx, by - 1, 3, 3, '#060a14');
+            p(bx, by, 2, 2, '#0284c7');
+            p(bx, by, 1.5, 1.5, '#38bdf8');
+            p(bx + 0.5, by, 1, 1, '#bae6fd');
+          }
+          p(2, 8, 2, 2, '#060a14'); p(6, 12, 2, 2, '#060a14');
+          p(3, 9, 4, 4, '#78350f');
+          p(3, 9, 3, 3, '#f59e0b');
+          p(3, 9, 1.5, 1.5, '#fde047');
+          p(2, 12, 2.5, 2.5, '#78350f');
+          p(1, 13, 2, 2, '#f59e0b');
+        }
+      },
+      helmet: {
+        promptFa: 'کلاهخود شوالیه اژدها با شاخ‌های طلایی و چشم قرمز',
+        promptEn: 'Dragon knight helmet with golden horns and glowing visor',
+        draw(ctx, s) {
+          const p = (x, y, w, h, c) => {
+            ctx.fillStyle = c;
+            ctx.fillRect(Math.round(x * s), Math.round(y * s), Math.max(1, Math.round(w * s)), Math.max(1, Math.round(h * s)));
+          };
+          p(2, 2, 2, 4, '#f59e0b'); p(12, 2, 2, 4, '#f59e0b');
+          p(2, 2, 1, 3, '#fde047'); p(13, 2, 1, 3, '#fde047');
+          p(4, 3, 8, 10, '#334155');
+          p(5, 4, 6, 8, '#64748b');
+          p(7, 2, 2, 5, '#e11d48');
+          p(5, 8, 6, 2, '#060a14');
+          p(5.5, 8.5, 2, 1, '#fb7185'); p(8.5, 8.5, 2, 1, '#fb7185');
+        }
+      },
+      shield: {
+        promptFa: 'سپر سلطنتی طلایی و فولادی با نشان یاقوت آبی',
+        promptEn: 'Royal golden and steel heater shield with sapphire crest',
+        draw(ctx, s) {
+          const p = (x, y, w, h, c) => {
+            ctx.fillStyle = c;
+            ctx.fillRect(Math.round(x * s), Math.round(y * s), Math.max(1, Math.round(w * s)), Math.max(1, Math.round(h * s)));
+          };
+          p(2.5, 2, 11, 8, '#f59e0b');
+          p(3.5, 10, 9, 2.5, '#d97706');
+          p(5.5, 12.5, 5, 2, '#b45309');
+          p(4, 3.5, 8, 6, '#475569');
+          p(4, 3.5, 4, 6, '#94a3b8');
+          p(6.5, 5, 3, 3, '#0284c7');
+          p(7, 5.5, 1.5, 1.5, '#38bdf8');
+        }
+      },
+      potion: {
+        promptFa: 'معجون سلامتی قرمز یاقوتی در شیشه کریستالی',
+        promptEn: 'Glowing ruby red health potion in a crystal flask',
+        draw(ctx, s) {
+          const p = (x, y, w, h, c) => {
+            ctx.fillStyle = c;
+            ctx.fillRect(Math.round(x * s), Math.round(y * s), Math.max(1, Math.round(w * s)), Math.max(1, Math.round(h * s)));
+          };
+          p(6.5, 1.5, 3, 2.5, '#b45309');
+          p(7, 1.5, 1.5, 2, '#f59e0b');
+          p(5.5, 3.5, 5, 1.2, '#94a3b8');
+          p(6.5, 4.5, 3, 2, '#cbd5e1');
+          p(3.5, 6.5, 9, 7.5, '#1e1b4b');
+          p(4.5, 6.5, 7, 7, '#e11d48');
+          p(4.5, 6.5, 7, 1.5, '#fb7185');
+          p(8.5, 7.5, 3, 6, '#9f1239');
+          p(5.2, 7.5, 1.3, 3, '#ffe4e6');
+        }
+      }
+    };
+
+    function renderOfflinePresetCards() {
+      const grid = document.getElementById('offlinePresetsGrid');
+      const labels = I18N[state.lang].presets;
+      grid.innerHTML = '';
+
+      Object.keys(OFFLINE_PRESETS).forEach(key => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'liquid-glass-sub hover:border-cyan-400/55 rounded-xl p-2 flex items-center gap-2 transition group cursor-pointer text-start';
+
+        const thumbWrap = document.createElement('div');
+        thumbWrap.className = 'w-8 h-8 checkerboard rounded-lg border border-white/15 flex items-center justify-center flex-shrink-0 overflow-hidden';
+
+        const c = document.createElement('canvas');
+        c.width = 16;
+        c.height = 16;
+        c.className = 'w-7 h-7 pixelated group-hover:scale-110 transition-transform';
+        OFFLINE_PRESETS[key].draw(c.getContext('2d'), 1);
+        thumbWrap.appendChild(c);
+
+        const lbl = document.createElement('span');
+        lbl.className = 'text-[11px] font-semibold text-slate-200 group-hover:text-cyan-200 truncate';
+        lbl.textContent = labels[key];
+
+        card.appendChild(thumbWrap);
+        card.appendChild(lbl);
+        card.onclick = () => {
+          const preset = OFFLINE_PRESETS[key];
+          document.getElementById('aiPromptInput').value = state.lang === 'fa' ? preset.promptFa : preset.promptEn;
+          loadOfflinePreset(key, false);
+        };
+        grid.appendChild(card);
+      });
+    }
+
+    function loadOfflinePreset(key, silent = false) {
+      const preset = OFFLINE_PRESETS[key];
+      if (!preset) return;
+      const size = state.gridSize;
+      const c = document.createElement('canvas');
+      c.width = size;
+      c.height = size;
+      const ctx = c.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+      ctx.clearRect(0, 0, size, size);
+      preset.draw(ctx, size / 16);
+
+      const imgData = ctx.getImageData(0, 0, size, size);
+      const next = new Uint32Array(size * size);
+      for (let i = 0; i < size * size; i++) {
+        const idx = i * 4;
+        next[i] = rgbaToUint32(imgData.data[idx], imgData.data[idx + 1], imgData.data[idx + 2], imgData.data[idx + 3]);
+      }
+
+      setActiveBuffer(next);
+      state.spriteName = key;
+      pushHistory();
+      syncBufferToSpriteAndRender();
+      if (!silent) showToast(tToast('presetLoaded'), 'success');
+    }
+
+    /**
+     * =========================================================================
+     * 14. AI SPRITE GENERATOR (GEMINI & OPENROUTER DUAL-PIPELINE)
+     * =========================================================================
+     */
+    async function fetchWithBackoff(url, options, maxRetries = 3) {
+      let delay = 1000;
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        const res = await fetch(url, options);
+        if (res.ok) return res;
+        if (attempt === maxRetries || (res.status !== 429 && res.status < 500)) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        await new Promise(r => setTimeout(r, delay));
+        delay *= 2;
+      }
+    }
+
+    async function callLLM(systemPrompt, userPrompt, jsonSchema = null) {
+      if (state.apiConfig.provider === 'openrouter' && state.apiConfig.apiKey) {
+        const res = await fetchWithBackoff('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${state.apiConfig.apiKey}`
+          },
+          body: JSON.stringify({
+            model: state.apiConfig.model || 'google/gemini-2.5-flash',
+            ...(jsonSchema ? { response_format: { type: 'json_object' } } : {}),
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt }
+            ]
+          })
+        });
+        const data = await res.json();
+        return data?.choices?.[0]?.message?.content || '';
+      } else {
+        const apiKey = state.apiConfig.apiKey || '';
+        const modelId = apiKey ? (state.apiConfig.model || 'gemini-2.5-flash') : 'gemini-3-flash-preview';
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`;
+
+        const payload = {
+          contents: [{ parts: [{ text: userPrompt }] }],
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          ...(jsonSchema ? {
+            generationConfig: {
+              responseMimeType: 'application/json',
+              responseSchema: jsonSchema
+            }
+          } : {})
+        };
+
+        const res = await fetchWithBackoff(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        return data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      }
+    }
+
+    async function generateSpriteWithAI() {
+      const promptText = document.getElementById('aiPromptInput').value.trim();
+      if (!promptText) {
+        showToast(tToast('enterPrompt'), 'error');
+        document.getElementById('aiPromptInput').focus();
+        return;
+      }
+
+      const size = state.gridSize;
+      const style = state.artStyle;
+      const maxColors = state.maxColors;
+      setAIGeneratingUI(true);
+
+      try {
+        if (size <= 32) {
+          const systemPrompt = `You are a master pixel artist. Create a crisp, recognizable ${size}x${size} pixel art sprite.
+Return valid JSON with:
+- "name": short alphanumeric filename
+- "palette": object mapping single lowercase letters ("a", "b", "c", ...) to "#RRGGBB" hex colors (max ${maxColors} colors, including dark outlines and highlight/shadow shading).
+- "rows": array of EXACTLY ${size} strings, each of length ${size}, where "." is transparent and letters map to "palette". Keep a 1-2px transparent margin.
+Art Style: ${style}.`;
+
+          const schema = {
+            type: 'OBJECT',
+            properties: {
+              name: { type: 'STRING' },
+              palette: { type: 'OBJECT', additionalProperties: { type: 'STRING' } },
+              rows: { type: 'ARRAY', items: { type: 'STRING' } }
+            },
+            required: ['name', 'palette', 'rows']
+          };
+
+          const raw = await callLLM(systemPrompt, `Design a ${size}x${size} pixel art sprite of: "${promptText}"`, schema);
+          const parsed = extractJsonSafely(raw);
+          if (!parsed || !Array.isArray(parsed.rows)) throw new Error('Invalid JSON');
+
+          const nextBuf = new Uint32Array(size * size);
+          const palMap = {};
+          for (const [k, hex] of Object.entries(parsed.palette || {})) {
+            palMap[k] = hexToUint32(hex);
+          }
+
+          for (let y = 0; y < Math.min(size, parsed.rows.length); y++) {
+            const row = String(parsed.rows[y] || '');
+            for (let x = 0; x < Math.min(size, row.length); x++) {
+              const ch = row[x];
+              if (ch !== '.' && ch !== ' ' && palMap[ch]) {
+                nextBuf[y * size + x] = palMap[ch];
+              }
+            }
+          }
+
+          setActiveBuffer(nextBuf);
+          state.spriteName = (parsed.name || 'ai_sprite').replace(/[^a-zA-Z0-9_-]/g, '_');
+        } else {
+          // 64x to 256x Crisp Vector + Palette Quantizer
+          const systemPrompt = `You are a master game sprite illustrator. Output ONLY raw valid <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">...</svg> code without markdown fences.
+Rules:
+1. Centered bold silhouette with 3px transparent padding margin.
+2. Crisp geometric shapes/paths with flat fills and dark 1.5px outlines.
+3. No gradients, no blur filters, no text, and no semi-transparent opacities.
+4. Art Style: ${style}. Max ${maxColors} distinct colors.`;
+
+          const rawSvg = await callLLM(systemPrompt, `Create a game sprite illustration of: "${promptText}"`, null);
+          const match = rawSvg.match(/<svg[\s\S]*<\/svg>/i);
+          if (!match) throw new Error('No SVG');
+          setActiveBuffer(await rasterizeAndQuantizeSvg(match[0], size, maxColors));
+          state.spriteName = 'ai_hd_sprite';
+        }
+
+        pushHistory();
+        syncBufferToSpriteAndRender();
+        showToast(tToast('aiSuccess'), 'success');
+      } catch (_) {
+        showToast(tToast('aiError'), 'error');
+      } finally {
+        setAIGeneratingUI(false);
+      }
+    }
+
+    function extractJsonSafely(text) {
+      try { return JSON.parse(text); }
+      catch (_) {
+        const m = text.match(/\{[\s\S]*\}/);
+        return m ? JSON.parse(m[0]) : null;
+      }
+    }
+
+    function setAIGeneratingUI(loading) {
+      const btn = document.getElementById('btnGenerateAI');
+      btn.disabled = loading;
+      document.getElementById('aiGenIcon').classList.toggle('hidden', loading);
+      document.getElementById('aiGenSpinner').classList.toggle('hidden', !loading);
+      document.getElementById('aiGenBtnLabel').textContent = loading ? t('generatingAiBtn') : t('generateAiBtn');
+    }
+
+    function rasterizeAndQuantizeSvg(svgString, targetSize, maxColors) {
+      return new Promise((resolve, reject) => {
+        const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          const c = document.createElement('canvas');
+          c.width = targetSize;
+          c.height = targetSize;
+          const ctx = c.getContext('2d');
+          ctx.imageSmoothingEnabled = false;
+          ctx.clearRect(0, 0, targetSize, targetSize);
+          ctx.drawImage(img, 0, 0, targetSize, targetSize);
+          resolve(quantizeImageData(ctx.getImageData(0, 0, targetSize, targetSize), maxColors, 128));
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(); };
+        img.src = url;
+      });
+    }
+
+    function quantizeImageData(imgData, maxColors, alphaThreshold = 128) {
+      const data = imgData.data;
+      const total = data.length / 4;
+      const out = new Uint32Array(total);
+      const samples = [];
+
+      for (let i = 0; i < total; i++) {
+        const idx = i * 4;
+        if (data[idx + 3] >= alphaThreshold) samples.push([data[idx], data[idx + 1], data[idx + 2]]);
+      }
+      if (samples.length === 0) return out;
+
+      const step = Math.max(1, Math.floor(samples.length / 2000));
+      const train = [];
+      for (let i = 0; i < samples.length; i += step) train.push(samples[i]);
+
+      const k = Math.min(maxColors, train.length);
+      const centroids = [];
+      for (let i = 0; i < k; i++) centroids.push([...train[Math.floor((i / k) * train.length)]]);
+
+      for (let iter = 0; iter < 6; iter++) {
+        const sums = Array.from({ length: k }, () => [0, 0, 0, 0]);
+        for (const [r, g, b] of train) {
+          let best = 0, bestD = Infinity;
+          for (let c = 0; c < k; c++) {
+            const d = (r - centroids[c][0]) ** 2 + (g - centroids[c][1]) ** 2 + (b - centroids[c][2]) ** 2;
+            if (d < bestD) { bestD = d; best = c; }
+          }
+          sums[best][0] += r; sums[best][1] += g; sums[best][2] += b; sums[best][3] += 1;
+        }
+        for (let c = 0; c < k; c++) {
+          if (sums[c][3] > 0) {
+            centroids[c][0] = Math.round(sums[c][0] / sums[c][3]);
+            centroids[c][1] = Math.round(sums[c][1] / sums[c][3]);
+            centroids[c][2] = Math.round(sums[c][2] / sums[c][3]);
+          }
+        }
+      }
+
+      const cU32 = centroids.map(c => rgbaToUint32(c[0], c[1], c[2], 255));
+      for (let i = 0; i < total; i++) {
+        const idx = i * 4;
+        if (data[idx + 3] < alphaThreshold) { out[i] = 0; continue; }
+        const r = data[idx], g = data[idx + 1], b = data[idx + 2];
+        let best = 0, bestD = Infinity;
+        for (let c = 0; c < k; c++) {
+          const d = (r - centroids[c][0]) ** 2 + (g - centroids[c][1]) ** 2 + (b - centroids[c][2]) ** 2;
+          if (d < bestD) { bestD = d; best = c; }
+        }
+        out[i] = cU32[best];
+      }
+      return out;
+    }
+
+    /**
+     * =========================================================================
+     * 15. IMAGE IMPORTER, TRANSPARENT PNG, SPRITE SHEET & JSON EXPORT
+     * =========================================================================
+     */
+    function handleImageUpload(e) {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const maxColors = parseInt(document.getElementById('imgQuantizeRange').value, 10) || 16;
+      const size = state.gridSize;
+
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          const c = document.createElement('canvas');
+          c.width = size;
+          c.height = size;
+          const ctx = c.getContext('2d');
+          ctx.clearRect(0, 0, size, size);
+
+          const ratio = Math.min(size / img.width, size / img.height);
+          const w = Math.max(1, Math.round(img.width * ratio));
+          const h = Math.max(1, Math.round(img.height * ratio));
+          ctx.drawImage(img, Math.floor((size - w) / 2), Math.floor((size - h) / 2), w, h);
+
+          setActiveBuffer(quantizeImageData(ctx.getImageData(0, 0, size, size), maxColors, 128));
+          state.spriteName = file.name.replace(/\.[^.]+$/, '') || 'imported_sprite';
+          pushHistory();
+          syncBufferToSpriteAndRender();
+          showToast(tToast('imgConverted'), 'success');
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+      e.target.value = '';
+    }
+
+    function exportTransparentPNG() {
+      const targetDim = state.gridSize * state.exportScale;
+      const out = document.createElement('canvas');
+      out.width = targetDim;
+      out.height = targetDim;
+      const ctx = out.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+      ctx.clearRect(0, 0, targetDim, targetDim);
+      ctx.drawImage(offscreenCanvas, 0, 0, targetDim, targetDim);
+
+      const a = document.createElement('a');
+      a.download = `${state.spriteName}_${state.gridSize}x_${state.exportScale}x.png`;
+      a.href = out.toDataURL('image/png');
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast(tToast('pngDownloaded'), 'success');
+    }
+
+    function exportSpriteSheetPNG() {
+      const size = state.gridSize;
+      const scale = state.exportScale;
+      const frameCount = state.frames.length;
+      const out = document.createElement('canvas');
+      out.width = size * frameCount * scale;
+      out.height = size * scale;
+      const ctx = out.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+      ctx.clearRect(0, 0, out.width, out.height);
+
+      const tmp = document.createElement('canvas');
+      tmp.width = size;
+      tmp.height = size;
+      const tCtx = tmp.getContext('2d');
+
+      state.frames.forEach((buf, idx) => {
+        const imgData = tCtx.createImageData(size, size);
+        new Uint32Array(imgData.data.buffer).set(buf);
+        tCtx.putImageData(imgData, 0, 0);
+        ctx.drawImage(tmp, idx * size * scale, 0, size * scale, size * scale);
+      });
+
+      const a = document.createElement('a');
+      a.download = `${state.spriteName}_sheet_${frameCount}f_${scale}x.png`;
+      a.href = out.toDataURL('image/png');
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast(tToast('sheetDownloaded'), 'success');
+    }
+
+    function copyJsonMatrix() {
+      const size = state.gridSize;
+      const buf = getActiveBuffer();
+      const matrix = [];
+      const pal = new Set();
+      for (let y = 0; y < size; y++) {
+        const row = [];
+        for (let x = 0; x < size; x++) {
+          const hex = uint32ToHex(buf[y * size + x]);
+          if (hex) pal.add(hex);
+          row.push(hex);
+        }
+        matrix.push(row);
+      }
+
+      const jsonStr = JSON.stringify({
+        name: state.spriteName,
+        size,
+        frame: state.currentFrameIndex + 1,
+        totalFrames: state.frames.length,
+        palette: Array.from(pal),
+        pixels: matrix
+      }, null, 2);
+
+      const ta = document.createElement('textarea');
+      ta.value = jsonStr;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (_) {}
+      document.body.removeChild(ta);
+      showToast(tToast('jsonCopied'), 'success');
+    }
+
+    /**
+     * =========================================================================
+     * 16. API SETTINGS, MODALS, TOASTS & KEYBOARD SHORTCUTS
+     * =========================================================================
+     */
+    function loadSavedApiConfig() {
+      try {
+        const raw = localStorage.getItem('ai_pixel_forge_pro_api');
+        if (raw) {
+          state.apiConfig = { ...state.apiConfig, ...JSON.parse(raw) };
+          document.getElementById('apiKeyInput').value = state.apiConfig.apiKey || '';
+          document.getElementById('apiModelInput').value = state.apiConfig.model || 'gemini-3-flash-preview';
+          updateApiDot();
+        }
+      } catch (_) {}
+    }
+
+    function openApiModal() {
+      renderAllLiquidDropdowns();
+      openModal('apiModal');
+    }
+
+    function saveApiConfig() {
+      state.apiConfig.apiKey = document.getElementById('apiKeyInput').value.trim();
+      state.apiConfig.model = document.getElementById('apiModelInput').value.trim() || 'gemini-3-flash-preview';
+      try {
+        localStorage.setItem('ai_pixel_forge_pro_api', JSON.stringify(state.apiConfig));
+      } catch (_) {}
+      updateApiDot();
+      closeModal('apiModal');
+    }
+
+    function resetApiConfig() {
+      state.apiConfig = { provider: 'gemini', apiKey: '', model: 'gemini-3-flash-preview' };
+      document.getElementById('apiKeyInput').value = '';
+      document.getElementById('apiModelInput').value = 'gemini-3-flash-preview';
+      try { localStorage.removeItem('ai_pixel_forge_pro_api'); } catch (_) {}
+      updateApiDot();
+      renderAllLiquidDropdowns();
+    }
+
+    function updateApiDot() {
+      document.getElementById('apiStatusDot').className = state.apiConfig.apiKey
+        ? 'w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]'
+        : 'w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]';
+    }
+
+    function openModal(id) {
+      const el = document.getElementById(id);
+      el.classList.remove('hidden');
+      el.classList.add('flex');
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      el.classList.add('hidden');
+      el.classList.remove('flex');
+    }
+
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const el = document.createElement('div');
+      const border = type === 'success' ? 'border-emerald-400/55 text-emerald-200'
+        : type === 'error' ? 'border-rose-400/55 text-rose-200'
+        : 'border-cyan-400/55 text-cyan-200';
+      el.className = `pointer-events-auto liquid-glass-hud px-3.5 py-2 rounded-2xl border ${border} text-xs font-semibold shadow-2xl transition-all duration-300`;
+      el.textContent = msg;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 280);
+      }, 3000);
+    }
+
+    function setupKeyboardShortcuts() {
+      window.addEventListener('keydown', (e) => {
+        if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+        if (e.code === 'Space') {
+          e.preventDefault();
+          state.pointer.spaceHeld = true;
+          viewportCanvas.classList.add('pan-cursor');
+          return;
+        }
+
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+          e.preventDefault();
+          e.shiftKey ? redo() : undo();
+          return;
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+          e.preventDefault();
+          redo();
+          return;
+        }
+
+        const keyMap = {
+          p: 'pencil',
+          e: 'eraser',
+          g: 'bucket',
+          i: 'picker',
+          l: 'line',
+          r: 'rect',
+          c: 'circle',
+          s: 'shade',
+          d: 'dither',
+          h: 'pan'
+        };
+        const k = e.key.toLowerCase();
+        if (keyMap[k]) selectTool(keyMap[k]);
+        else if (k === 'x') swapPrimarySecondaryColors();
+        else if (k === '#') toggleGridLines();
+      });
+
+      window.addEventListener('keyup', (e) => {
+        if (e.code === 'Space') {
+          state.pointer.spaceHeld = false;
+          if (state.activeTool !== 'pan') viewportCanvas.classList.remove('pan-cursor');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
