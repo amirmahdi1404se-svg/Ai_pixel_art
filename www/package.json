@@ -1,0 +1,10 @@
+{
+  "name": "ai-pixel-forge",
+  "version": "1.0.0",
+  "description": "AI Pixel Art Studio",
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/cli": "^6.1.2",
+    "@capacitor/core": "^6.1.2"
+  }
+}
